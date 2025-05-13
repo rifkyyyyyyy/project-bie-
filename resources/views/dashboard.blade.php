@@ -1,6 +1,8 @@
 @extends('layout.sidebar')
 
 @section('content')
+
+
 <!-- page content -->
 <div class="right_col" role="main" style="background-color: #f5f6fa; height: 250vh; width: 86vw; margin-left:-20px;">
     <div class="main-panel">
@@ -24,7 +26,7 @@
                     </div>                    
                 </div>
             </div>
-
+            
             <div class="card shadow-sm border-0 mb-4" style="width: 83%; margin: auto; border-radius: 20; margin-top: -40px;">
                 <div class="card-body">
                     <h5 class="font-weight-bold">Statistik keseluruhan</h5>
@@ -127,33 +129,34 @@
 Circles.create({
     id: 'circles-1',
     radius: 45,
-    value: 5,
-    maxValue: 100,
+    value: {{ $vvipCount }},
+    maxValue: 46,
     width: 8,
-    text: 5,
-    colors: ['#e6e6e6', '#FFA726'], // Orange
+    text: '{{ $vvipCount }}', // ini memastikan "0" tetap tampil sebagai string
+    colors: ['#e6e6e6', '#FFA726'],
     duration: 400
 });
 Circles.create({
     id: 'circles-2',
     radius: 45,
-    value: 36,
-    maxValue: 100,
+    value: {{ $vipCount }},
+    maxValue: 50,
     width: 8,
-    text: 36,
-    colors: ['#e6e6e6', '#66BB6A'], // Green
+    text: '{{ $vipCount }}',
+    colors: ['#e6e6e6', '#66BB6A'],
     duration: 400
 });
 Circles.create({
     id: 'circles-3',
     radius: 45,
-    value: 12,
-    maxValue: 100,
+    value: {{ $barackCount }},
+    maxValue: 50,
     width: 8,
-    text: 12,
-    colors: ['#e6e6e6', '#EF5350'], // Red
+    text: '{{ $barackCount }}',
+    colors: ['#e6e6e6', '#EF5350'],
     duration: 400
 });
+
 </script>
 
 @endsection

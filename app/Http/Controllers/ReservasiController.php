@@ -114,6 +114,14 @@ public function calendarView()
     return view('calendar', compact('kamars', 'reservasis', 'startDate', 'endDate'));
 }
 
+public function dashboard()
+{
+    $vvipCount = Reservasi::where('tipe_kamar', 'VVIP')->count();
+    $vipCount = Reservasi::where('tipe_kamar', 'VIP')->count();
+    $barackCount = Reservasi::where('tipe_kamar', 'Barack')->count();
+
+    return view('dashboard', compact('vvipCount', 'vipCount', 'barackCount'));
+}
 
 
 
