@@ -91,6 +91,30 @@ public function destroy($id)
     return redirect()->back()->with('success', 'Reservasi berhasil dihapus!');
 }
 
+public function calendarView()
+{
+    $startDate = Carbon::today();
+    $endDate = Carbon::today()->addDays(13);
+
+    $reservasis = Reservasi::with('kamar')
+        ->where(function($q) use ($startDate, $endDate) {
+            $q->whereBetween('periode_masuk', [$startDate, $endDate])
+              ->orWhereBetween('periode_keluar', [$startDate, $endDate]);
+        })
+        ->get();
+
+    $kamarIdsTerisi = $reservasis->pluck('kamar_id')->unique();
+
+    $kamars = Kamar::whereIn('id', $kamarIdsTerisi)
+                   ->orderBy('tipe_kamar')
+                   ->orderBy('nomor_kamar')
+                   ->get()
+                   ->groupBy('tipe_kamar');
+
+    return view('calendar', compact('kamars', 'reservasis', 'startDate', 'endDate'));
+}
+
+
 
 
 }

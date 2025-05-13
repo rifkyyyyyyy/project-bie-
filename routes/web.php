@@ -20,6 +20,7 @@ Route::get('/calendar', [BookingController::class, 'calendar']);
 Route::get('/akun', [akunController::class, 'akun']);
 Route::put('/reservasi/{id}', [ReservasiController::class, 'update'])->name('reservasi.update');
 Route::delete('/reservasi/{id}', [ReservasiController::class, 'destroy'])->name('reservasi.destroy');
+Route::get('/calendar', [ReservasiController::class, 'calendarView'])->name('calendar');
 
 
 Route::get('/', function () {

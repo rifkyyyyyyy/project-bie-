@@ -58,7 +58,30 @@
                                         <td>{{ $r->asal_kota }}</td>
                                         <td>{{ \Carbon\Carbon::parse($r->periode_masuk)->translatedFormat('d F Y') }}</td>
                                         <td>{{ \Carbon\Carbon::parse($r->periode_keluar)->translatedFormat('d F Y') }}</td>
-                                        <td>{{ ceil(\Carbon\Carbon::parse($r->periode_masuk)->diffInDays($r->periode_keluar) / 30) }} bulan</td>
+                                        <td>
+                                        @switch($r->lama_menginap)
+                                            @case(1)
+                                            1 Hari
+                                            @break
+                                            @case(7)
+                                            1 Minggu
+                                            @break
+                                            @case(14)
+                                            2 Minggu
+                                            @break
+                                            @case(30)
+                                            1 Bulan
+                                            @break
+                                            @case(60)
+                                            2 Bulan
+                                            @break
+                                            @case(90)
+                                            3 Bulan
+                                            @break
+                                            @default
+                                            {{ $r->lama_menginap }} Hari
+                                        @endswitch
+                                        </td>   
                                         <td>{{ $r->kamar->tipe_kamar ?? '-' }}</td> 
                                         <td>{{ $r->kamar->nomor_kamar ?? '-' }}</td>
                                         <td>

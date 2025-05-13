@@ -12,15 +12,18 @@
       border-right: 1px solid #dee2e6;
     }
     .booking {
-      position: absolute;
-      top: 0.25rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-      color: white;
-      font-size: 0.85rem;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+        position: absolute;
+        top: 4px;
+        left: 0;
+        padding: 2px 6px;
+        font-size: 0.75rem;
+        color: white;
+        background-color: #28a745;
+        border-radius: 4px;
+        width: 100%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
     }
   </style>
 
@@ -51,185 +54,89 @@
 
   <!-- Calendar -->
   <div class="overflow-auto">
-    <div class="calendar-grid text-center text-uppercase small fw-semibold border-bottom bg-white">
-      <div class="bg-light px-2 py-2 border-end">Room</div>
-      <div class="py-2">TUE<br>31 AUG</div>
-      <div class="py-2">WED<br>01 SEP</div>
-      <div class="py-2">THU<br>02 SEP</div>
-      <div class="py-2">FRI<br>03 SEP</div>
-      <div class="py-2">SAT<br>04 SEP</div>
-      <div class="py-2">SUN<br>05 SEP</div>
-      <div class="py-2">MON<br>06 SEP</div>
-      <div class="py-2">TUE<br>07 SEP</div>
-      <div class="py-2">WED<br>08 SEP</div>
-      <div class="py-2">THU<br>09 SEP</div>
-      <div class="py-2">FRI<br>10 SEP</div>
-      <div class="py-2">SAT<br>11 SEP</div>
-      <div class="py-2">SUN<br>12 SEP</div>
-      <div class="py-2">MON<br>13 SEP</div>
+@php
+$dayWidth = 80; // px
+@endphp
+
+<div class="calendar-grid text-center text-uppercase small fw-semibold border-bottom bg-white">
+    <div class="bg-light px-2 py-2 border-end">Room</div>
+    @for ($i = 0; $i < 14; $i++)
+        <div class="py-2">{{ now()->addDays($i)->format('D') }}<br>{{ now()->addDays($i)->format('d M') }}</div>
+    @endfor
+</div>
+
+@foreach ($kamars as $tipe => $listKamar)
+    <div class="calendar-grid bg-light align-items-center text-sm fw-semibold border-bottom">
+        <div class="h-100 px-2 border-end d-flex align-items-center">{{ strtoupper($tipe) }}</div>
+        <div class="col-span-14"></div>
     </div>
 
-    <div class="position-relative">
-      <!-- Repeatable Section Template for VVIP, VIP, and Barack -->
-      <!-- Example: Group Header -->
-      <div class="calendar-grid bg-light align-items-center text-sm fw-semibold border-bottom">
-        <div class="h-100 px-2 border-end d-flex align-items-center">VIP</div>
-        <div class="col-span-14"></div>
-      </div>
+    @foreach ($listKamar as $kamar)
+        <div class="calendar-grid align-items-start border-bottom bg-white position-relative" style="height: 48px; overflow: visible;">
+            <div class="h-100 px-2 border-end d-flex align-items-center">{{ $kamar->nomor_kamar }}</div>
 
-      <!-- Example: Room Rows -->
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 4</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 5</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 6</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid bg-light align-items-center text-sm fw-semibold border-bottom">
-        <div class="h-100 px-2 border-end d-flex align-items-center">VVIP</div>
-        <div class="col-span-14"></div>
-      </div>
+            <div class="position-relative" style="grid-column: span 14; height: 48px; width: 100%;">
 
-      <!-- Example: Room Rows -->
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vvip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 1</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vvip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 2</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vvip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 3</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vvip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 4</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vvip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 5</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vvip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 6</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vvip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 7</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vvip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 8</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vvip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 9</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative vvip" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 10</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
+                @php
+                    $offsetTop = 0;
+                @endphp
 
-      <div class="calendar-grid bg-light align-items-center text-sm fw-semibold border-bottom">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Barack</div>
-        <div class="col-span-14"></div>
-      </div>
+                @foreach ($reservasis->where('kamar_id', $kamar->id) as $r)
+                    @php
+                        $startIndex = \Carbon\Carbon::parse($r->periode_masuk)->diffInDays($startDate);
+                        $duration = \Carbon\Carbon::parse($r->periode_masuk)->diffInDays($r->periode_keluar) + 1;
+                        $left = $startIndex * $dayWidth;
+                        $width = $duration * $dayWidth;
+                    @endphp
 
-      <!-- Example: Room Rows -->
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative barack" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 1</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <div class="calendar-grid align-items-center border-bottom bg-white position-relative barack" style="height: 48px;">
-        <div class="h-100 px-2 border-end d-flex align-items-center">Room 2</div>
-        <!-- 14 empty columns -->
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="border-end h-100"></div> <div class="border-end h-100"></div>
-        <div class="border-end h-100"></div> <div class="h-100"></div>
-      </div>
-      <!-- Duplikat dan ubah nama room dan class vvip/vip/barack sesuai kebutuhan -->
+                    <div class="booking"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalReservasi{{ $r->id }}"
+                        style="left: {{ $left }}px; width: {{ $width }}px; top: {{ $offsetTop }}px; background-color: #28a745;">
+                        {{ $r->nama_lengkap }}
+                    </div>
 
-    </div>
-  </div>
+                    <div class="modal fade" id="modalReservasi{{ $r->id }}" tabindex="-1" aria-labelledby="modalReservasiLabel{{ $r->id }}" aria-hidden="true">
+                      <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="modalReservasiLabel{{ $r->id }}">Detail Reservasi</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <p><strong>Nama:</strong> {{ $r->nama_lengkap }}</p>
+                            <p><strong>Periode:</strong><br>
+                              {{ \Carbon\Carbon::parse($r->periode_masuk)->translatedFormat('d F Y') }} - 
+                              {{ \Carbon\Carbon::parse($r->periode_keluar)->translatedFormat('d F Y') }}
+                            </p>
+                            <p><strong>Lama Menginap:</strong> 
+                              @switch($r->lama_menginap)
+                                  @case(1) 1 Hari @break
+                                  @case(7) 1 Minggu @break
+                                  @case(14) 2 Minggu @break
+                                  @case(30) 1 Bulan @break
+                                  @case(60) 2 Bulan @break
+                                  @case(90) 3 Bulan @break
+                                  @default {{ $r->lama_menginap }} Hari
+                              @endswitch
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    @php
+                        $offsetTop += 24; // stack height
+                    @endphp
+                @endforeach
+
+            </div>
+        </div>
+    @endforeach
+@endforeach
+
+
+
 
   <!-- Legend -->
   <div class="d-flex gap-4 small mt-4 px-4 text-white">
