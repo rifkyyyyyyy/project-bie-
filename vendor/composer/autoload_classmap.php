@@ -6,7 +6,17 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Http\\Controllers\\BookingController' => $baseDir . '/app/Http/Controllers/BookingController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
+    'App\\Http\\Controllers\\DashboardController' => $baseDir . '/app/Http/Controllers/DashboardController.php',
+    'App\\Http\\Controllers\\FormController' => $baseDir . '/app/Http/Controllers/FormController.php',
+    'App\\Http\\Controllers\\LoginController' => $baseDir . '/app/Http/Controllers/LoginController.php',
+    'App\\Http\\Controllers\\TableController' => $baseDir . '/app/Http/Controllers/TableController.php',
+    'App\\Http\\Controllers\\akunController' => $baseDir . '/app/Http/Controllers/akunController.php',
+    'App\\Http\\Controllers\\formulirPendaftaranController' => $baseDir . '/app/Http/Controllers/formulirPendaftaranController.php',
+    'App\\Models\\Booking' => $baseDir . '/app/Models/Booking.php',
+    'App\\Models\\Room' => $baseDir . '/app/Models/Room.php',
+    'App\\Models\\Sewa' => $baseDir . '/app/Models/Sewa.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',

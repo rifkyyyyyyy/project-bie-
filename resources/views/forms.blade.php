@@ -66,7 +66,8 @@
           <h3 class="mb-4 text-center">Form Reservasi</h3>
   
           <div class="card shadow-sm p-4" style="margin-bottom: 30px;">
-            <form id="demo-form2" data-parsley-validate class="needs-validation" novalidate>
+            <form action="{{ route('reservasi.store') }}" method="POST" id="demo-form2" data-parsley-validate class="needs-validation" novalidate>
+              @csrf            
               <!-- Biodata Diri -->
               <h5 class="mb-3"><strong>Biodata Diri</strong></h5>
   
@@ -77,9 +78,9 @@
 
               <div class="mb-3">
                 <label for="kamar" class="form-label"><strong>Jenis Kelamin</strong></label>
-                <select class="form-select" id="kamr" name="kamar" required>
-                  <option value="1">Laki - laki</option>
-                  <option value="7">Perempuan</option>
+                <select class="form-select" name="jenis_kelamin" required>
+                  <option value="Laki-laki">Laki - laki</option>
+                  <option value="Perempuan">Perempuan</option>
                 </select>
               </div>
   
@@ -107,8 +108,8 @@
               </div>
 
               <div class="mb-3">
-                <label for="periodeMasuk" class="form-label"><strong>Periode Keluar</strong></label>
-                <input type="date" class="form-control" id="periodeMasuk" name="periode_masuk" required>
+                <label for="periodeKeluar" class="form-label"><strong>Periode Keluar</strong></label>
+                <input type="date" class="form-control" name="periode_keluar" required>
               </div>
   
               <div class="mb-3">
@@ -125,10 +126,10 @@
 
               <div class="mb-3">
                 <label for="kamar" class="form-label"><strong>Kamar</strong></label>
-                <select class="form-select" id="kamr" name="kamar" required>
-                  <option value="1">VVIP</option>
-                  <option value="7">VIP</option>
-                  <option value="14">Barack</option>
+                <select class="form-select" name="tipe_kamar" required>
+                  <option value="VVIP">VVIP</option>
+                  <option value="VIP">VIP</option>
+                  <option value="Barack">Barack</option>
                 </select>
               </div>
 
