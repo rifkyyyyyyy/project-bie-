@@ -18,6 +18,8 @@ Route::get('/table', [TableController::class, 'index'])->name('table');
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::get('/calendar', [BookingController::class, 'calendar']);
 Route::get('/akun', [akunController::class, 'akun']);
+Route::put('/reservasi/{id}', [ReservasiController::class, 'update'])->name('reservasi.update');
+Route::delete('/reservasi/{id}', [ReservasiController::class, 'destroy'])->name('reservasi.destroy');
 
 
 Route::get('/', function () {

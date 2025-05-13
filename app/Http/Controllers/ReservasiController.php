@@ -64,4 +64,33 @@ class ReservasiController extends Controller
 
             return response()->json($kamars);
     }
+
+    public function index()
+{
+    $reservasi = Reservasi::with('kamar')->get(); // ambil semua data + relasi kamar
+    return view('data-customer', compact('reservasi'));
+}
+
+public function update(Request $request, $id)
+{
+    $reservasi = Reservasi::findOrFail($id);
+    $reservasi->update($request->only(['nama_lengkap', 'email', 'no_hp', 'asal_kota']));
+    return redirect()->back()->with('success', 'Reservasi berhasil diupdate!');
+}
+
+public function destroy($id)
+{
+    $reservasi = Reservasi::findOrFail($id);
+
+    if ($reservasi->kamar) {
+        $reservasi->kamar->decrement('terisi');
+    }
+
+    $reservasi->delete();
+
+    return redirect()->back()->with('success', 'Reservasi berhasil dihapus!');
+}
+
+
+
 }

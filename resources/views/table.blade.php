@@ -43,56 +43,88 @@
                                     <th>Periode Masuk</th>
                                     <th>Periode Keluar</th>
                                     <th>Lama Menginap</th>
+                                    <th>Tipe Kamar</th>
+                                    <th>No Kamar</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Budi Santoso</td>
-                                    <td>budi@example.com</td>
-                                    <td>081234567890</td>
-                                    <td>Surabaya</td>
-                                    <td>01 Januari 2024</td>
-                                    <td>01 Juni 2024</td>
-                                    <td>5 bulan</td>
-                                    <td>Sudah Keluar</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary">Edit</button>
-                                        <button class="btn btn-sm btn-danger">Hapus</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Siti Aminah</td>
-                                    <td>siti@example.com</td>
-                                    <td>082345678901</td>
-                                    <td>Malang</td>
-                                    <td>15 Februari 2024</td>
-                                    <td>15 Mei 2024</td>
-                                    <td>3 bulan</td>
-                                    <td>Sudah Keluar</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary">Edit</button>
-                                        <button class="btn btn-sm btn-danger">Hapus</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Andi Wijaya</td>
-                                    <td>andi@example.com</td>
-                                    <td>083456789012</td>
-                                    <td>Jember</td>
-                                    <td>01 Maret 2024</td>
-                                    <td>-</td>
-                                    <td>2 bulan</td>
-                                    <td>Masih Menginap</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary">Edit</button>
-                                        <button class="btn btn-sm btn-danger">Hapus</button>
-                                    </td>
-                                </tr>
+                           <tbody>
+                                @forelse ($reservasi as $r)
+                                    <tr>
+                                        <td>{{ $r->nama_lengkap }}</td>
+                                        <td>{{ $r->email }}</td>
+                                        <td>{{ $r->no_hp }}</td>
+                                        <td>{{ $r->asal_kota }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($r->periode_masuk)->translatedFormat('d F Y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($r->periode_keluar)->translatedFormat('d F Y') }}</td>
+                                        <td>{{ ceil(\Carbon\Carbon::parse($r->periode_masuk)->diffInDays($r->periode_keluar) / 30) }} bulan</td>
+                                        <td>{{ $r->kamar->tipe_kamar ?? '-' }}</td> 
+                                        <td>{{ $r->kamar->nomor_kamar ?? '-' }}</td>
+                                        <td>
+                                            @if (\Carbon\Carbon::parse($r->periode_keluar)->isPast())
+                                                <span class="badge bg-danger">Sudah Keluar</span>
+                                            @else
+                                                <span class="badge bg-success">Masih Menginap</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $r->id }}">Edit</button>
+                                            <form action="{{ route('reservasi.destroy', $r->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Modal Edit -->
+                                    <div class="modal fade" id="editModal{{ $r->id }}" tabindex="-1" aria-labelledby="editModalLabel{{ $r->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editModalLabel{{ $r->id }}">Edit Reservasi</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="{{ route('reservasi.update', $r->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label>Nama Lengkap</label>
+                                                            <input type="text" class="form-control" name="nama_lengkap" value="{{ $r->nama_lengkap }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label>Email</label>
+                                                            <input type="email" class="form-control" name="email" value="{{ $r->email }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label>No HP</label>
+                                                            <input type="text" class="form-control" name="no_hp" value="{{ $r->no_hp }}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label>Asal Kota</label>
+                                                            <input type="text" class="form-control" name="asal_kota" value="{{ $r->asal_kota }}" required>
+                                                        </div>
+                                                        <!-- Tambahkan field lain jika diperlukan -->
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                        <button type="submit" class="btn btn-primary">Simpan</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                @empty
+                                    <tr>
+                                        <td colspan="11" class="text-center">Belum ada data reservasi.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
+
                         </table>
-                        <p><i>*Tombol Edit, Hapus, dan Search belum terhubung dengan fungsi atau database.</i></p>
                     </div>
                 </div>
             </div>
