@@ -107,10 +107,10 @@
                 <input type="date" class="form-control" id="periodeMasuk" name="periode_masuk" required>
               </div>
 
-              <div class="mb-3">
+              {{-- <div class="mb-3">
                 <label for="periodeKeluar" class="form-label"><strong>Periode Keluar</strong></label>
                 <input type="date" class="form-control" name="periode_keluar" required>
-              </div>
+              </div> --}}
   
               <div class="mb-3">
                 <label for="lamaMenginap" class="form-label"><strong>Lama Menginap</strong></label>
@@ -134,10 +134,11 @@
               </div>
 
               <div class="mb-3">
-                <label for="nomor_kamarr" class="form-label"><strong>Nomor Kamar</strong></label>
-                <select class="form-select" id="nomor_kamar" name="nomor_kamar" required>
-                
+                <label for="nomor_kamar" class="form-label"><strong>Nomor Kamar</strong></label>
+                <select class="form-select" id="nomor_kamar" name="kamar_id" required>
+                  <option value="">Pilih kamar yang tersedia...</option>
                 </select>
+
               </div>
   
               <div class="form-check mb-4">
@@ -162,4 +163,29 @@
   
 <!-- /page content -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tipeKamar = document.querySelector('[name="tipe_kamar"]');
+        const gender = document.querySelector('[name="jenis_kelamin"]');
+        const kamarSelect = document.getElementById('nomor_kamar');
+
+        function fetchKamar() {
+            if (tipeKamar.value && gender.value) {
+                fetch(`/api/kamar-tersedia?tipe_kamar=${tipeKamar.value}&jenis_kelamin=${gender.value}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        kamarSelect.innerHTML = '<option value="">Pilih kamar</option>';
+                        data.forEach(kamar => {
+                            kamarSelect.innerHTML += `<option value="${kamar.id}">${kamar.nomor_kamar}</option>`;
+                        });
+                    });
+            }
+        }
+
+        tipeKamar.addEventListener('change', fetchKamar);
+        gender.addEventListener('change', fetchKamar);
+    });
+</script>
+
 @endsection

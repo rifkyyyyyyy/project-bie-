@@ -6,18 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
-class reservasi extends Model
+class Reservasi extends Model
 {
     use HasFactory;
-    protected $fillable = [
+
+    protected $table = 'reservasi';
+    
+        protected $fillable = [
         'nama_lengkap',
         'jenis_kelamin',
         'email',
         'no_hp',
         'asal_kota',
         'periode_masuk',
-        'priode_keluar',
+        'periode_keluar',
         'lama_menginap',
         'tipe_kamar',
-    ]; }
+        'kamar_id'
+    ]; 
 
+    public function kamar()
+    {
+    return $this->belongsTo(Kamar::class);
+    }
+
+}

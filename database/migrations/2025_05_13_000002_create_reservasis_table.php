@@ -19,9 +19,10 @@ return new class extends Migration
             $table->string('no_hp')->collation('utf8mb4_general_ci');
             $table->string('asal_kota')->collation('utf8mb4_general_ci');
             $table->date('periode_masuk');
-            $table->date('priode_keluar'); // Perhatikan typo: 'priode_keluar' — apakah seharusnya 'periode_keluar'?
+            $table->date('periode_keluar'); 
             $table->integer('lama_menginap');
             $table->string('tipe_kamar')->collation('utf8mb4_general_ci');
+            $table->foreignId('kamar_id')->constrained('kamars');
             $table->timestamps();
         });
     }
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reservasis');
+        Schema::dropIfExists('reservasi');
     }
 };
