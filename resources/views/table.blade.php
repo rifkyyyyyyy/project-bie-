@@ -22,18 +22,15 @@
                     </div>
                     <div class="x_content">
 
-                        <!-- Search Form -->
+                      <!-- Search Form -->
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <input type="text" class="form-control" placeholder="Cari Customer...">
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-info">Search</button>
+                                <input type="text" class="form-control" id="searchInput" placeholder="Cari Customer...">
                             </div>
                         </div>
 
                         <!-- Tabel Data -->
-                        <table class="table table-bordered">
+                        <table class="table table-bordered" id="customerTable">
                             <thead>
                                 <tr>
                                     <th>Nama Lengkap</th>
@@ -155,3 +152,23 @@
     </div>
 </div>
 @endsection
+{{-- @push('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById('searchInput');
+        const table = document.getElementById('customerTable');
+        const rows = table.getElementsByTagName('tr');
+
+        searchInput.addEventListener('keyup', function () {
+            const filter = searchInput.value.toLowerCase();
+            for (let i = 1; i < rows.length; i++) { // mulai dari index 1 karena index 0 adalah header
+                const td = rows[i].getElementsByTagName('td')[0]; // kolom "Nama Lengkap"
+                if (td) {
+                    const textValue = td.textContent || td.innerText;
+                    rows[i].style.display = textValue.toLowerCase().includes(filter) ? '' : 'none';
+                }
+            }
+        });
+    });
+</script>
+@endpush --}}
