@@ -13,7 +13,6 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::get('/reservasi', [ReservasiController::class, 'create'])->name('reservasi.create');
 Route::post('/reservasi', [ReservasiController::class, 'store'])->name('reservasi.store');
 Route::get('/api/kamar-tersedia', [ReservasiController::class, 'getKamarTersedia']);
-// Route::get('/form', [FormController::class, 'index'])->name('forms');
 Route::get('/table', [TableController::class, 'index'])->name('table');
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::get('/calendar', [BookingController::class, 'calendar']);
@@ -23,7 +22,28 @@ Route::delete('/reservasi/{id}', [ReservasiController::class, 'destroy'])->name(
 Route::get('/calendar', [ReservasiController::class, 'calendarView'])->name('calendar');
 Route::get('/dashboard', [ReservasiController::class, 'dashboard'])->name('dashboard');
 
+Route::resource('akun', AkunController::class);
 
+// Login routes
+Route::get('/login', [LoginController::class, 'index'])->name('login');
+Route::post('/login', [LoginController::class, 'authenticate'])->name('login');
+
+// Logout route (POST method)
+Route::post('/logout', function () {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/login');
+})->name('logout');
+
+// Protected routes
+Route::middleware('auth')->group(function () {
+ Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+
+});
+
+Route::get('akun/{id}/ganti-password', [AkunController::class, 'formGantiPassword'])->name('akun.gantiPasswordForm');
+Route::put('akun/{id}/ganti-password', [AkunController::class, 'gantiPassword'])->name('akun.gantiPassword');
 
 Route::get('/', function () {
     return view('login');

@@ -187,11 +187,12 @@
       </div>
   
       <!-- LOGOUT -->
-      <div class="d-flex align-items-center gap-4 px-3">
-        <a href="/logout" class="text-white" title="Logout">
-          <i class="fas fa-sign-out-alt fa-lg"></i>
-        </a>
-      </div>
+      <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="bg-transparent border-0 text-white" title="Logout">
+              <i class="fas fa-sign-out-alt fa-lg"></i>
+          </button>
+      </form>
     </div>
   </nav>
   
@@ -213,9 +214,7 @@
         </div>
 
         <div class="collapse mt-3 ps-4" id="profileDropdown">
-          <a href="#" class="d-block text-dark mb-2">My Profile</a>
-          <a href="#" class="d-block text-dark mb-2">Edit Profile</a>
-          <a href="#" class="d-block text-dark">Settings</a>
+          <a href="{{ route('akun.gantiPasswordForm', Auth::user()->id) }}" class="d-block text-dark">Settings</a>
         </div>
       </div>
 

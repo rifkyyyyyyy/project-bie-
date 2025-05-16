@@ -18,13 +18,16 @@
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
 
-    <!-- Tambahan CSS Langsung -->
     <style>
       .login_content img {
         width: 300px;
         margin: 10px auto;
         display: block;
         margin-bottom: 20px;
+      }
+      /* Tambahan styling untuk tombol toggle */
+      #togglePassword {
+        margin-top: 5px;
       }
     </style>
   </head>
@@ -37,68 +40,30 @@
       <div class="login_wrapper">
         <div class="animate form login_form">
           <section class="login_content">
-            <form>
+        <form method="POST" action="{{ route('login') }}">
+              @csrf
               <div class="login-image">
                 <img src="gambar/logo.png" alt="Login Image" />
               </div>
               <div>
-                <input type="text" class="form-control" placeholder="Username" required="" />
+                    <input type="email" name="email" class="form-control" placeholder="Email" required autofocus />
               </div>
               <div>
-                <input type="password" class="form-control" placeholder="Password" required="" />
+               <input type="password" id="password" name="password" class="form-control" placeholder="Password" required />
+                <button type="button" id="togglePassword" class="btn btn-secondary btn-sm">Show Password</button>
               </div>
               <div>
-                <a class="btn btn-default submit" href="{{ url('/dashboard') }}">Log in</a>
-                <a class="reset_pass" href="#">Lost your password?</a>
+                <button type="submit" class="btn btn-default submit">Log in</button>
+                <a class="reset_pass" href="{{ route('akun.gantiPasswordForm', 11) }}">Lost your password?</a>
               </div>
 
               <div class="clearfix"></div>
 
               <div class="separator">
-                <p class="change_link">New to site?
-                  <a href="#signup" class="to_register"> Create Account </a>
-                </p>
-
                 <div class="clearfix"></div>
                 <br />
 
                 <div>
-                  <p>©2025 All Rights Reserved. BIEPlus is a Bootstrap. Privacy and Terms</p>
-                </div>
-              </div>
-            </form>
-          </section>
-        </div>
-
-        <div id="register" class="animate form registration_form">
-          <section class="login_content">
-            <form>
-              <h1>Create Account</h1>
-              <div>
-                <input type="text" class="form-control" placeholder="Username" required="" />
-              </div>
-              <div>
-                <input type="email" class="form-control" placeholder="Email" required="" />
-              </div>
-              <div>
-                <input type="password" class="form-control" placeholder="Password" required="" />
-              </div>
-              <div>
-                <a class="btn btn-default submit" href="index.html">Submit</a>
-              </div>
-
-              <div class="clearfix"></div>
-
-              <div class="separator">
-                <p class="change_link">Already a member ?
-                  <a href="#signin" class="to_register"> Log in </a>
-                </p>
-
-                <div class="clearfix"></div>
-                <br />
-
-                <div>
-                  <h1><i class="fa fa-paw"></i> BIEPlus!</h1>
                   <p>©2025 All Rights Reserved. BIEPlus is a Bootstrap. Privacy and Terms</p>
                 </div>
               </div>
@@ -107,5 +72,16 @@
         </div>
       </div>
     </div>
+
+    <script>
+      const togglePassword = document.querySelector('#togglePassword');
+      const password = document.querySelector('#password');
+
+      togglePassword.addEventListener('click', function () {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        this.textContent = type === 'password' ? 'Show Password' : 'Hide Password';
+      });
+    </script>
   </body>
 </html>
