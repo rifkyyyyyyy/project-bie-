@@ -138,12 +138,11 @@ public function table(Request $request)
     $today = Carbon::today();
     $query = Reservasi::with('kamar');
 
+    // Filter tanggal
     if ($filter === 'today') {
         $query->whereDate('periode_masuk', $today);
     } elseif ($filter === 'last7days') {
         $query->whereBetween('periode_masuk', [$today->copy()->subDays(6), $today]);
-    } elseif ($filter === 'all') {
-        // tidak ada filter
     }
 
     // Filter status
@@ -151,13 +150,12 @@ public function table(Request $request)
         $query->whereDate('periode_keluar', '>=', $today);
     } elseif ($status === 'sudah_keluar') {
         $query->whereDate('periode_keluar', '<', $today);
-    }elseif ($filter === 'all') {
-        // tidak ada filter
     }
 
     $reservasi = $query->get();
 
-    return view('table', compact('reservasi', 'filter'));
+    return view('table', compact('reservasi', 'filter', 'status'));
 }
+
 
 }

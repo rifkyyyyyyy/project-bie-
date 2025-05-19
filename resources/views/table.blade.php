@@ -30,30 +30,26 @@
                                 </form>
                             </div>
                         
-                            <!-- Filter Tanggal dan Status di pojok kanan dengan jarak -->
-                            <div class="d-flex ms-auto">
-                                <!-- Filter Tanggal -->
-                                <div class="me-2">
-                                    <form method="GET" action="{{ route('table') }}">
+                            <!-- Filter Tanggal dan Status -->
+                                <form method="GET" action="{{ route('table') }}" class="d-flex ms-auto">
+                                    <!-- Filter Tanggal -->
+                                    <div class="me-2">
                                         <select name="filter" class="form-select" onchange="this.form.submit()">
                                             <option value="">-- Semua Data --</option>
                                             <option value="today" {{ request('filter') == 'today' ? 'selected' : '' }}>Hari Ini</option>
                                             <option value="last7days" {{ request('filter') == 'last7days' ? 'selected' : '' }}>7 Hari Terakhir</option>
                                         </select>
-                                    </form>
-                                </div>
-                        
-                                <!-- Filter Status -->
-                                <div>
-                                    <form method="GET" action="{{ route('table') }}">
+                                    </div>
+
+                                    <!-- Filter Status -->
+                                    <div>
                                         <select name="status" class="form-select" onchange="this.form.submit()">
                                             <option value="">-- Semua Status --</option>
                                             <option value="masih_menginap" {{ request('status') == 'masih_menginap' ? 'selected' : '' }}>Masih Menginap</option>
                                             <option value="sudah_keluar" {{ request('status') == 'sudah_keluar' ? 'selected' : '' }}>Sudah Keluar</option>
                                         </select>
-                                    </form>
-                                </div>
-                            </div>
+                                    </div>
+                                </form>
                         </div>                        
                     </div>
 
