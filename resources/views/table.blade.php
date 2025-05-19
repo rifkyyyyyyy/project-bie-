@@ -22,12 +22,40 @@
                     </div>
                     <div class="x_content">
 
-                      <!-- Search Form -->
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="searchInput" placeholder="Cari Customer...">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                            <!-- Search -->
+                            <div class="col-md-6">
+                                <form method="GET" action="{{ route('table') }}">
+                                    <input type="text" name="search" class="form-control" id="searchInput" placeholder="Cari Customer..." value="{{ request('search') }}">
+                                </form>
                             </div>
-                        </div>
+                        
+                            <!-- Filter Tanggal dan Status di pojok kanan dengan jarak -->
+                            <div class="d-flex ms-auto">
+                                <!-- Filter Tanggal -->
+                                <div class="me-2">
+                                    <form method="GET" action="{{ route('table') }}">
+                                        <select name="filter" class="form-select" onchange="this.form.submit()">
+                                            <option value="">-- Semua Data --</option>
+                                            <option value="today" {{ request('filter') == 'today' ? 'selected' : '' }}>Hari Ini</option>
+                                            <option value="last7days" {{ request('filter') == 'last7days' ? 'selected' : '' }}>7 Hari Terakhir</option>
+                                        </select>
+                                    </form>
+                                </div>
+                        
+                                <!-- Filter Status -->
+                                <div>
+                                    <form method="GET" action="{{ route('table') }}">
+                                        <select name="status" class="form-select" onchange="this.form.submit()">
+                                            <option value="">-- Semua Status --</option>
+                                            <option value="masih_menginap" {{ request('status') == 'masih_menginap' ? 'selected' : '' }}>Masih Menginap</option>
+                                            <option value="sudah_keluar" {{ request('status') == 'sudah_keluar' ? 'selected' : '' }}>Sudah Keluar</option>
+                                        </select>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>                        
+                    </div>
 
                         <!-- Tabel Data -->
                         <table class="table table-bordered" id="customerTable">

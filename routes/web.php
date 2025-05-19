@@ -14,6 +14,7 @@ Route::get('/reservasi', [ReservasiController::class, 'create'])->name('reservas
 Route::post('/reservasi', [ReservasiController::class, 'store'])->name('reservasi.store');
 Route::get('/api/kamar-tersedia', [ReservasiController::class, 'getKamarTersedia']);
 Route::get('/table', [TableController::class, 'index'])->name('table');
+Route::get('/table', [ReservasiController::class, 'table'])->name('table');
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::get('/calendar', [BookingController::class, 'calendar']);
 Route::get('/akun', [akunController::class, 'akun']);

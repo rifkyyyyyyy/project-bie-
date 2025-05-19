@@ -130,4 +130,34 @@ public function calendarView()
 
     return view('calendar', compact('kamars', 'reservasis', 'startDate', 'endDate'));
 }
+
+public function table(Request $request)
+{
+    $filter = $request->get('filter');
+    $status = $request->get('status');
+    $today = Carbon::today();
+    $query = Reservasi::with('kamar');
+
+    if ($filter === 'today') {
+        $query->whereDate('periode_masuk', $today);
+    } elseif ($filter === 'last7days') {
+        $query->whereBetween('periode_masuk', [$today->copy()->subDays(6), $today]);
+    } elseif ($filter === 'all') {
+        // tidak ada filter
+    }
+
+    // Filter status
+    if ($status === 'masih_menginap') {
+        $query->whereDate('periode_keluar', '>=', $today);
+    } elseif ($status === 'sudah_keluar') {
+        $query->whereDate('periode_keluar', '<', $today);
+    }elseif ($filter === 'all') {
+        // tidak ada filter
+    }
+
+    $reservasi = $query->get();
+
+    return view('table', compact('reservasi', 'filter'));
+}
+
 }
