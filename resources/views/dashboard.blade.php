@@ -2,6 +2,20 @@
 
 @section('content')
 
+<style>
+    .room-box {
+        width: 40px;
+        height: 40px;
+        margin: 3px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        color: white;
+    }
+</style>
+
 
 <!-- page content -->
 <div class="right_col" role="main" style="background-color: #f5f6fa; height: 250vh; width: 86vw; margin-left:-20px;">
@@ -50,78 +64,37 @@
         </div>
     </div>
 
+    <div class="card shadow-sm border-0 mb-4 mt-5" style="width: 83%; margin: auto; border-radius: 20;">
+        <div class="card-body">
+            <h5 class="font-weight-bold">Ketersediaan Kamar</h5>
+            <p class="text-muted">Warna: Abu-abu (kosong), Kuning (sebagian), Hijau (penuh)</p>
+            
+            <div class="d-flex flex-wrap" style="max-width: 550px;">
+                @foreach($kamars as $kamar)
+                        @php
+                            switch ($kamar->status_warna ?? 'gray') {
+                                case 'green':
+                                    $color = 'background-color: #22c55e;'; // penuh
+                                    break;
+                                case 'yellow':
+                                    $color = 'background-color: #facc15;'; // sebagian
+                                    break;
+                                default:
+                                    $color = 'background-color: #d1d5db;'; // abu (kosong)
+                            }
+                    @endphp
+            
     
-    <section id="ProgramDormitoryIndex" style="margin-top: 100px; margin-bottom: 100px;">
-        <div class="container">
-            <div class="row justify-content-center">
-              <div class="col-lg-10">
-                <div class="container">
-                    <div class="card p-4 shadow" style="border: none;">
-            
-                        <!-- VVIP Camp -->
-                        <div class="row align-items-center mb-5">
-                            <div class="col-md-6">
-                                <img src="gambar/vvip.png" alt="VVIP Camp" class="img-fluid rounded shadow" style="transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'"
-                                onmouseout="this.style.transform='scale(1)'">
-                            </div>
-                            <div class="col-md-6">
-                                <h4 class="fw-bold">VVIP Camp</h4>
-                                <p class="text-muted">Pilihan premium dengan fasilitas eksklusif untuk kenyamanan maksimal selama Anda belajar di Kampung Inggris Pare.</p>
-                                <ul class="list-unstyled">
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Water Heater</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>AC</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Wastafel</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>WiFi</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Security 24 Jam</li>
-                                </ul>
-                                <a href="/reservation+VVIP" class="btn btn-primary">Lihat Selengkapnya →</a>
-                            </div>
-                        </div>
-            
-                        <!-- VIP Camp (gambar kanan, teks kiri) -->
-                        <div class="row align-items-center flex-row-reverse mb-5">
-                            <div class="col-md-6">
-                                <img src="gambar/vip.png" alt="VIP Camp" class="img-fluid rounded shadow" style="transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'"
-                                onmouseout="this.style.transform='scale(1)'">
-                            </div>
-                            <div class="col-md-6">
-                                <h4 class="fw-bold">VIP Camp</h4>
-                                <p class="text-muted">Pilihan favorit dengan fasilitas modern dan kenyamanan optimal untuk pengalaman belajar yang maksimal.</p>
-                                <ul class="list-unstyled">
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Double-Deck Bed</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>AC</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>WiFi</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Security 24 Jam</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Area Ruangan Luas</li>
-                                </ul>
-                                <a href="/reservation+VIP" class="btn btn-primary">Lihat Selengkapnya →</a>
-                            </div>
-                        </div>
-            
-                        <!-- Barack Camp (gambar kiri, teks kanan) -->
-                        <div class="row align-items-center mb-5">
-                            <div class="col-md-6">
-                                <img src="gambar/barack.png" alt="Barack Camp" class="img-fluid rounded shadow" style="transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'"
-                                onmouseout="this.style.transform='scale(1)'">
-                            </div>
-                            <div class="col-md-6">
-                                <h4 class="fw-bold">Baracks Camp (Khusus Rombongan)</h4>
-                                <p class="text-muted">Pilihan ekonomis untuk rombongan dengan fasilitas lengkap dan harga terjangkau, Cocok untuk belajar bersama teman-teman.</p>
-                                <ul class="list-unstyled">
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>3 Double-Deck Bed</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>AC</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>WiFi</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Security 24 Jam</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Area Ruangan Luas</li>
-                                </ul>
-                                <a href="/reservation+Barack" class="btn btn-primary">Lihat Selengkapnya →</a>
-                            </div>
-                        </div>
+                    <div class="room-box d-flex align-items-center justify-content-center m-1"
+                         style="width: 40px; height: 40px; border-radius: 6px; {{ $color }}">
+                        {{ $kamar->nomor_kamar }}
                     </div>
-                </div>
+                @endforeach
             </div>
         </div>
-    </section>
+    </div>
+    
+    
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/circles.js@0.0.6/circles.min.js"></script>

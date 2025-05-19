@@ -152,7 +152,7 @@
     </div>
 </div>
 @endsection
-{{-- @push('scripts')
+@push('scripts')
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const searchInput = document.getElementById('searchInput');
@@ -171,4 +171,4 @@
         });
     });
 </script>
-@endpush --}}
+@endpush

@@ -150,7 +150,7 @@
     }
 
     .logo-area {
-      width: 244px;
+      width: 240px;
       height: auto; /* biar menyesuaikan tinggi konten */
       padding: 14px 0; /* atau kurangi lagi jika ingin lebih rapat */
       background-color: #ffffff;

@@ -52,88 +52,120 @@
         </div>
   </div>
 
-  <!-- Calendar -->
-  <div class="overflow-auto">
-@php
-$dayWidth = 80; // px
-@endphp
-
-<div class="calendar-grid text-center text-uppercase small fw-semibold border-bottom bg-white">
-    <div class="bg-light px-2 py-2 border-end">Room</div>
-    @for ($i = 0; $i < 14; $i++)
-        <div class="py-2">{{ now()->addDays($i)->format('D') }}<br>{{ now()->addDays($i)->format('d M') }}</div>
-    @endfor
-</div>
-
-@foreach ($kamars as $tipe => $listKamar)
-    <div class="calendar-grid bg-light align-items-center text-sm fw-semibold border-bottom">
-        <div class="h-100 px-2 border-end d-flex align-items-center">{{ strtoupper($tipe) }}</div>
-        <div class="col-span-14"></div>
-    </div>
-
-    @foreach ($listKamar as $kamar)
-        <div class="calendar-grid align-items-start border-bottom bg-white position-relative" style="height: 48px; overflow: visible;">
-            <div class="h-100 px-2 border-end d-flex align-items-center">{{ $kamar->nomor_kamar }}</div>
-
-            <div class="position-relative" style="grid-column: span 14; height: 48px; width: 100%;">
-
+                <!-- Calendar -->
+              <div class="overflow-auto">
                 @php
-                    $offsetTop = 0;
+                $dayWidth = 80; // px
+                $today = now();
                 @endphp
-
-                @foreach ($reservasis->where('kamar_id', $kamar->id) as $r)
-                    @php
-                        $startIndex = \Carbon\Carbon::parse($r->periode_masuk)->diffInDays($startDate);
-                        $duration = \Carbon\Carbon::parse($r->periode_masuk)->diffInDays($r->periode_keluar) + 1;
-                        $left = $startIndex * $dayWidth;
-                        $width = $duration * $dayWidth;
-                    @endphp
-
-                    <div class="booking"
-                        data-bs-toggle="modal"
-                        data-bs-target="#modalReservasi{{ $r->id }}"
-                        style="left: {{ $left }}px; width: {{ $width }}px; top: {{ $offsetTop }}px; background-color: #28a745;">
-                        {{ $r->nama_lengkap }}
+                
+                <div class="calendar-grid text-center text-uppercase small fw-semibold border-bottom bg-white">
+                    <div class="bg-light px-2 py-2 border-end">Room</div>
+                    @for ($i = 0; $i < 14; $i++)
+                        <div class="py-2">{{ now()->addDays($i)->format('D') }}<br>{{ now()->addDays($i)->format('d M') }}</div>
+                    @endfor
+                </div>
+                
+                @foreach ($kamars as $tipe => $listKamar)
+                    <div class="calendar-grid bg-light align-items-center text-sm fw-semibold border-bottom">
+                        <div class="h-100 px-2 border-end d-flex align-items-center">{{ strtoupper($tipe) }}</div>
+                        <div class="col-span-14"></div>
                     </div>
+                
+                    @foreach ($listKamar as $kamar)
 
-                    <div class="modal fade" id="modalReservasi{{ $r->id }}" tabindex="-1" aria-labelledby="modalReservasiLabel{{ $r->id }}" aria-hidden="true">
-                      <div class="modal-dialog modal-sm">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="modalReservasiLabel{{ $r->id }}">Detail Reservasi</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            <p><strong>Nama:</strong> {{ $r->nama_lengkap }}</p>
-                            <p><strong>Periode:</strong><br>
-                              {{ \Carbon\Carbon::parse($r->periode_masuk)->translatedFormat('d F Y') }} - 
-                              {{ \Carbon\Carbon::parse($r->periode_keluar)->translatedFormat('d F Y') }}
-                            </p>
-                            <p><strong>Lama Menginap:</strong> 
-                              @switch($r->lama_menginap)
-                                  @case(1) 1 Hari @break
-                                  @case(7) 1 Minggu @break
-                                  @case(14) 2 Minggu @break
-                                  @case(30) 1 Bulan @break
-                                  @case(60) 2 Bulan @break
-                                  @case(90) 3 Bulan @break
-                                  @default {{ $r->lama_menginap }} Hari
-                              @endswitch
-                            </p>
-                          </div>
+                        @php
+                            // Cek apakah kamar punya reservasi aktif (masih menginap)
+                            $isActive = $reservasis->where('kamar_id', $kamar->id)->contains(function ($r) use ($today) {
+                                return \Carbon\Carbon::parse($r->periode_keluar)->gte($today);
+                            });
+                        @endphp
+
+                        @if ($isActive)
+                        <div class="calendar-grid align-items-start border-bottom bg-white position-relative" style="height: 48px; overflow: visible;">
+                            <div class="h-100 px-2 border-end d-flex align-items-center">{{ $kamar->nomor_kamar }}</div>
+
+                            <div class="position-relative" style="grid-column: span 14; height: 48px; width: 100%;">
+
+                                @php
+                                    $offsetTop = 0;
+
+                                    $activeReservasis = $reservasis->where('kamar_id', $kamar->id)->filter(function ($r) use ($today) {
+                                        return \Carbon\Carbon::parse($r->periode_masuk)->lte($today) &&
+                                              \Carbon\Carbon::parse($r->periode_keluar)->gte($today);
+                                    });
+
+                                    $jumlahAktif = $activeReservasis->count();
+
+                                    $bgColor = '';
+                                    if ($jumlahAktif > 0 && $jumlahAktif < $kamar->kapasitas) {
+                                        $bgColor = '#ffcc00'; // kuning
+                                    } elseif ($jumlahAktif >= $kamar->kapasitas) {
+                                        $bgColor = '#1fe668'; // hijau
+                                    }
+                                @endphp
+
+                                @foreach ($reservasis->where('kamar_id', $kamar->id) as $r)
+                                    @php
+                                        $periodeKeluar = \Carbon\Carbon::parse($r->periode_keluar);
+                                        if ($periodeKeluar->lt($today)) continue;
+
+                                        $startIndex = \Carbon\Carbon::parse($r->periode_masuk)->diffInDays($startDate);
+                                        $duration = \Carbon\Carbon::parse($r->periode_masuk)->diffInDays($r->periode_keluar) + 1;
+                                        $left = $startIndex * $dayWidth;
+                                        $width = $duration * $dayWidth;
+                                    @endphp
+
+                                    <div class="booking"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalReservasi{{ $r->id }}"
+                                        style="left: {{ $left }}px; width: {{ $width }}px; top: {{ $offsetTop }}px; background-color: {{ $bgColor }};">
+                                        {{ $r->nama_lengkap }}
+                                    </div>
+
+                                    {{-- Modal --}}
+                                    <div class="modal fade" id="modalReservasi{{ $r->id }}" tabindex="-1" aria-labelledby="modalReservasiLabel{{ $r->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalReservasiLabel{{ $r->id }}">Detail Reservasi</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Nama:</strong> {{ $r->nama_lengkap }}</p>
+                                                    <p><strong>Periode:</strong><br>
+                                                        {{ \Carbon\Carbon::parse($r->periode_masuk)->translatedFormat('d F Y') }} - 
+                                                        {{ \Carbon\Carbon::parse($r->periode_keluar)->translatedFormat('d F Y') }}
+                                                    </p>
+                                                    <p><strong>Lama Menginap:</strong> 
+                                                        @switch($r->lama_menginap)
+                                                            @case(1) 1 Hari @break
+                                                            @case(7) 1 Minggu @break
+                                                            @case(14) 2 Minggu @break
+                                                            @case(30) 1 Bulan @break
+                                                            @case(60) 2 Bulan @break
+                                                            @case(90) 3 Bulan @break
+                                                            @default {{ $r->lama_menginap }} Hari
+                                                        @endswitch
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @php
+                                        $offsetTop += 24;
+                                    @endphp
+                                @endforeach
+
+                            </div>
                         </div>
-                      </div>
-                    </div>
+                        @endif
 
-                    @php
-                        $offsetTop += 24; // stack height
-                    @endphp
-                @endforeach
+                    @endforeach
+                  @endforeach
 
-            </div>
-        </div>
-    @endforeach
-@endforeach
+  
 
 
 

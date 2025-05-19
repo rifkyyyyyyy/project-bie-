@@ -28,10 +28,9 @@ class ReservasiController extends Controller
         'kamar_id' => 'required|exists:kamars,id',
     ]);
 
-    // Hitung periode_keluar otomatis
-    $periode_keluar = Carbon::parse($request->periode_masuk)->addDays((int) $request->lama_menginap);
-    
-    $kamar = Kamar::findOrFail($request->kamar_id);
+    $periode_keluar = Carbon::parse($request->periode_masuk)
+        ->addDays((int) $request->lama_menginap)
+        ->setTime(23, 59, 59);
 
     Reservasi::create([
         'nama_lengkap' => $request->nama_lengkap,
@@ -45,12 +44,30 @@ class ReservasiController extends Controller
         'tipe_kamar' => $request->tipe_kamar,
         'kamar_id' => $request->kamar_id
     ]);
-    
-    $kamar = Kamar::find($request->kamar_id);
-    $kamar->increment('terisi');
-        
+
+    // 🔁 Recalculate kolom `terisi` untuk kamar tersebut
+    $this->updateTerisiKamar($request->kamar_id);
+
     return redirect()->back()->with('success', 'Reservasi berhasil dikirim!');
-    }
+}
+
+
+    private function updateTerisiKamar($kamarId)
+{
+    $today = Carbon::today()->toDateString();
+
+    // Ambil semua reservasi aktif hari ini untuk kamar tersebut
+    $aktifHariIni = Reservasi::where('kamar_id', $kamarId)
+        ->whereDate('periode_masuk', '<=', $today)
+        ->whereDate('periode_keluar', '>=', $today)
+        ->count();
+
+    // Update kolom `terisi`
+    $kamar = Kamar::find($kamarId);
+    $kamar->terisi = $aktifHariIni;
+    $kamar->save();
+}
+
 
     public function getKamarTersedia(Request $request)
         {
@@ -113,16 +130,4 @@ public function calendarView()
 
     return view('calendar', compact('kamars', 'reservasis', 'startDate', 'endDate'));
 }
-
-public function dashboard()
-{
-    $vvipCount = Reservasi::where('tipe_kamar', 'VVIP')->count();
-    $vipCount = Reservasi::where('tipe_kamar', 'VIP')->count();
-    $barackCount = Reservasi::where('tipe_kamar', 'Barack')->count();
-
-    return view('dashboard', compact('vvipCount', 'vipCount', 'barackCount'));
-}
-
-
-
 }
