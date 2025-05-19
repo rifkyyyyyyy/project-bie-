@@ -1,5 +1,16 @@
 @extends('layout.sidebar')
 
+@php
+function filter_kamar($kamars, $prefix, $start, $end) {
+    return $kamars->filter(function($kamar) use ($prefix, $start, $end) {
+        return str_starts_with($kamar->nomor_kamar, $prefix) &&
+               intval(substr($kamar->nomor_kamar, 2)) >= $start &&
+               intval(substr($kamar->nomor_kamar, 2)) <= $end;
+    });
+}
+@endphp
+
+
 @section('content')
 
 <style>
@@ -66,32 +77,122 @@
 
     <div class="card shadow-sm border-0 mb-4 mt-5" style="width: 83%; margin: auto; border-radius: 20;">
         <div class="card-body">
-            <h5 class="font-weight-bold">Ketersediaan Kamar</h5>
-            <p class="text-muted">Warna: Abu-abu (kosong), Kuning (sebagian), Hijau (penuh)</p>
-            
-            <div class="d-flex flex-wrap" style="max-width: 550px;">
-                @foreach($kamars as $kamar)
-                        @php
-                            switch ($kamar->status_warna ?? 'gray') {
-                                case 'green':
-                                    $color = 'background-color: #22c55e;'; // penuh
-                                    break;
-                                case 'yellow':
-                                    $color = 'background-color: #facc15;'; // sebagian
-                                    break;
-                                default:
-                                    $color = 'background-color: #d1d5db;'; // abu (kosong)
-                            }
+    <h5 class="font-weight-bold">Ketersediaan Kamar</h5>
+    <p class="text-muted">Warna: Abu-abu (kosong), Kuning (sebagian), Hijau (penuh)</p>
+
+    {{-- ================= VVIP ================= --}}
+    <h3 class="mt-4 text-center fw-bold">VVIP</h3>
+    <div class="d-flex justify-content-between" style="max-width: 1000px; gap: 40px;">
+        <div style="flex: 1; text-align: center; font-weight: bold;">Putra</div>
+        <div style="flex: 1; text-align: center; font-weight: bold;">Putri</div>
+    </div>
+    <div class="d-flex justify-content-between" style="gap: 40px; flex-wrap: wrap; max-width: 1000px;">
+        <div style="flex: 1;">
+            <div class="d-flex flex-wrap">
+                @foreach(filter_kamar($kamars, 'A', 1, 23) as $kamar)
+                    @php
+                        switch ($kamar->status_warna ?? 'gray') {
+                            case 'green': $color = 'background-color: #22c55e;'; break;
+                            case 'yellow': $color = 'background-color: #facc15;'; break;
+                            default: $color = 'background-color: #d1d5db;';
+                        }
                     @endphp
-            
-    
-                    <div class="room-box d-flex align-items-center justify-content-center m-1"
-                         style="width: 40px; height: 40px; border-radius: 6px; {{ $color }}">
-                        {{ $kamar->nomor_kamar }}
-                    </div>
+                    <div class="room-box m-1" style="{{ $color }}">{{ $kamar->nomor_kamar }}</div>
                 @endforeach
             </div>
         </div>
+        <div style="flex: 1;">
+            <div class="d-flex flex-wrap justify-content-end">
+                @foreach(filter_kamar($kamars, 'A', 24, 46) as $kamar)
+                    @php
+                        switch ($kamar->status_warna ?? 'gray') {
+                            case 'green': $color = 'background-color: #22c55e;'; break;
+                            case 'yellow': $color = 'background-color: #facc15;'; break;
+                            default: $color = 'background-color: #d1d5db;';
+                        }
+                    @endphp
+                    <div class="room-box m-1" style="{{ $color }}">{{ $kamar->nomor_kamar }}</div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+
+{{-- ================= VIP ================= --}}
+<h3 class="mt-4 text-center fw-bold">VIP</h3>
+    <div class="d-flex justify-content-between" style="max-width: 1000px; gap: 40px;">
+        <div style="flex: 1; text-align: center; font-weight: bold;">Putra</div>
+        <div style="flex: 1; text-align: center; font-weight: bold;">Putri</div>
+    </div>
+<div class="d-flex justify-content-between" style="gap: 40px; flex-wrap: wrap; max-width: 1000px;">
+    <div style="flex: 1;">
+        <div class="d-flex flex-wrap">
+            @foreach(filter_kamar($kamars, 'B', 1, 25) as $kamar)
+                @php
+                    switch ($kamar->status_warna ?? 'gray') {
+                        case 'green': $color = 'background-color: #22c55e;'; break;
+                        case 'yellow': $color = 'background-color: #facc15;'; break;
+                        default: $color = 'background-color: #d1d5db;';
+                    }
+                @endphp
+                <div class="room-box m-1" style="{{ $color }}">{{ $kamar->nomor_kamar }}</div>
+            @endforeach
+        </div>
+    </div>
+    <div style="flex: 1;">
+        <div class="d-flex flex-wrap justify-content-end">
+            @foreach(filter_kamar($kamars, 'B', 26, 50) as $kamar)
+                @php
+                    switch ($kamar->status_warna ?? 'gray') {
+                        case 'green': $color = 'background-color: #22c55e;'; break;
+                        case 'yellow': $color = 'background-color: #facc15;'; break;
+                        default: $color = 'background-color: #d1d5db;';
+                    }
+                @endphp
+                <div class="room-box m-1" style="{{ $color }}">{{ $kamar->nomor_kamar }}</div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
+{{-- ================= Barack ================= --}}
+<h3 class="mt-4 text-center fw-bold">BARACK</h3>
+    <div class="d-flex justify-content-between" style="max-width: 1000px; gap: 40px;">
+        <div style="flex: 1; text-align: center; font-weight: bold;">Putra</div>
+        <div style="flex: 1; text-align: center; font-weight: bold;">Putri</div>
+    </div>
+    <div class="d-flex justify-content-between" style="gap: 40px; flex-wrap: wrap; max-width: 1000px;">
+    <div style="flex: 1;">
+        <div class="d-flex flex-wrap">
+            @foreach(filter_kamar($kamars, 'C', 1, 25) as $kamar)
+                @php
+                    switch ($kamar->status_warna ?? 'gray') {
+                        case 'green': $color = 'background-color: #22c55e;'; break;
+                        case 'yellow': $color = 'background-color: #facc15;'; break;
+                        default: $color = 'background-color: #d1d5db;';
+                    }
+                @endphp
+                <div class="room-box m-1" style="{{ $color }}">{{ $kamar->nomor_kamar }}</div>
+            @endforeach
+        </div>
+    </div>
+    <div style="flex: 1;">
+        <div class="d-flex flex-wrap justify-content-end">
+            @foreach(filter_kamar($kamars, 'C', 26, 50) as $kamar)
+                @php
+                    switch ($kamar->status_warna ?? 'gray') {
+                        case 'green': $color = 'background-color: #22c55e;'; break;
+                        case 'yellow': $color = 'background-color: #facc15;'; break;
+                        default: $color = 'background-color: #d1d5db;';
+                    }
+                @endphp
+                <div class="room-box m-1" style="{{ $color }}">{{ $kamar->nomor_kamar }}</div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
+
     </div>
     
     
@@ -129,7 +230,6 @@ Circles.create({
     colors: ['#e6e6e6', '#EF5350'],
     duration: 400
 });
-
 </script>
 
 @endsection

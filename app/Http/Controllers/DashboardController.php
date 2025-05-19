@@ -9,12 +9,24 @@ class DashboardController extends Controller
 {
     public function dashboard()
     {
-        $vvipCount = Reservasi::where('tipe_kamar', 'VVIP')->count();
-        $vipCount = Reservasi::where('tipe_kamar', 'VIP')->count();
-        $barackCount = Reservasi::where('tipe_kamar', 'Barack')->count();
     
         $kamars = Kamar::orderBy('nomor_kamar')->get();
         $today = Carbon::today()->toDateString();
+
+        $vvipCount = Reservasi::where('tipe_kamar', 'VVIP')
+            ->whereDate('periode_masuk', '<=', $today)
+            ->whereDate('periode_keluar', '>=', $today)
+            ->count();
+
+        $vipCount = Reservasi::where('tipe_kamar', 'VIP')
+            ->whereDate('periode_masuk', '<=', $today)
+            ->whereDate('periode_keluar', '>=', $today)
+            ->count();
+
+        $barackCount = Reservasi::where('tipe_kamar', 'Barack')
+            ->whereDate('periode_masuk', '<=', $today)
+            ->whereDate('periode_keluar', '>=', $today)
+            ->count();
     
         // Ambil semua reservasi yang aktif hari ini
         $reservasiAktif = Reservasi::whereDate('periode_masuk', '<=', $today)
