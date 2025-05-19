@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TableController;
-use App\Http\Controllers\FormController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\akunController;

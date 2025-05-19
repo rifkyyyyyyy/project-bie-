@@ -51,7 +51,7 @@
                             <div class="ln_solid"></div>
                             <div class="item form-group">
                                 <div class="col-md-6 offset-md-2">
-                                    <a href="{{ route('akun.index') }}" class="btn btn-primary">Cancel</a>
+                                    {{-- <button type="button" class="btn btn-primary" onclick="window.location.href='{{ route('akun.index') }}'">Kembali</button> --}}
                                     <button class="btn btn-primary" type="reset">Reset</button>
                                     <button type="submit" class="btn btn-success">Submit</button>
                                 </div>

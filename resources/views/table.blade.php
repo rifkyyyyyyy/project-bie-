@@ -67,7 +67,9 @@
                                     <th>Tipe Kamar</th>
                                     <th>No Kamar</th>
                                     <th>Status</th>
-                                    <th>Aksi</th>
+                                    @if (auth()->user()->level === 'admin')
+                                        <th>Aksi</th>
+                                    @endif
                                 </tr>
                             </thead>
                            <tbody>
@@ -112,6 +114,7 @@
                                                 <span class="badge bg-success">Masih Menginap</span>
                                             @endif
                                         </td>
+                                        @if (auth()->user()->level === 'admin')
                                         <td>
                                             <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $r->id }}">Edit</button>
                                             <form action="{{ route('reservasi.destroy', $r->id) }}" method="POST" style="display:inline;">
@@ -120,6 +123,7 @@
                                                 <button class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
                                             </form>
                                         </td>
+                                        @endif
                                     </tr>
 
                                     <!-- Modal Edit -->

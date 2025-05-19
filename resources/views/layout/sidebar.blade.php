@@ -206,8 +206,10 @@
           <div class="d-flex align-items-center">
             <img src="{{ asset('gambar/img.jpg') }}" alt="Profile" class="rounded-circle me-2" style="width: 50px; height: 50px;">
             <div>
-              <div class="fw-semibold text-dark">Briliant</div>
-              <div class="text-muted fw-semibold" style="font-size: 0.875rem;">Administrator</div>
+             <div class="fw-semibold text-dark">{{ auth()->user()->name }}</div>
+              <div class="text-muted fw-semibold" style="font-size: 0.875rem;">
+                  {{ ucfirst(auth()->user()->level) }}
+              </div>
             </div>
           </div>
           <i class="fas fa-chevron-down me-2 text-muted"></i>
@@ -220,12 +222,31 @@
 
       <!-- Menu -->
       <ul class="nav nav-pills flex-column">
-        <li class="nav-item"><a href="{{ url('/dashboard') }}" class="nav-link"><i class="fa fa-home me-2"></i> Dashboard</a></li>
-        <li class="nav-item"><a href="{{ url('/reservasi') }}" class="nav-link"><i class="fa fa-edit me-2"></i> Reservasi</a></li>
-        <li class="nav-item"><a href="{{ url('/table') }}" class="nav-link"><i class="fa fa-table me-2"></i> Data</a></li>
-        <li class="nav-item"><a href="{{ url('/calendar') }}" class="nav-link"><i class="fa fa-calendar me-2"></i> Calendar</a></li>
-        <li class="nav-item"><a href="{{ url('/akun') }}" class="nav-link"><i class="fa fa-user me-2"></i> Akun</a></li>
-      </ul>
+    <li class="nav-item">
+        <a href="{{ url('/dashboard') }}" class="nav-link"><i class="fa fa-home me-2"></i> Dashboard</a>
+    </li>
+
+    @if(auth()->user()->level === 'admin')
+    <li class="nav-item">
+        <a href="{{ url('/reservasi') }}" class="nav-link"><i class="fa fa-edit me-2"></i> Reservasi</a>
+    </li>
+    @endif
+
+    <li class="nav-item">
+        <a href="{{ url('/table') }}" class="nav-link"><i class="fa fa-table me-2"></i> Data</a>
+    </li>
+
+    <li class="nav-item">
+        <a href="{{ url('/calendar') }}" class="nav-link"><i class="fa fa-calendar me-2"></i> Calendar</a>
+    </li>
+
+    @if(auth()->user()->level === 'admin')
+    <li class="nav-item">
+        <a href="{{ url('/akun') }}" class="nav-link"><i class="fa fa-user me-2"></i> Akun</a>
+    </li>
+    @endif
+</ul>
+
     </div>
 
     <!-- Main Content -->

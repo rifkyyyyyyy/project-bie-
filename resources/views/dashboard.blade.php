@@ -38,7 +38,7 @@ function filter_kamar($kamars, $prefix, $start, $end) {
                     <div class="d-flex justify-content-start align-items-start flex-wrap">
                         <div style="margin-left: 30px;">
                             <h3 class="text-white pb-2 fw-bold" style="margin-top: 0;">Dashboard</h3>
-                            <h2 class="text-white op-7 mb-2" style="margin-top: 0;">Welcome Admin!</h2>                            
+                            <h2 class="text-white op-7 mb-2" style="margin-top: 0;">Welcome <b>{{ auth()->user()->name }}</b></h2>                            
                         </div>
                         <div class="py-2" style="margin-left: 770px;">
                             <a href="#" style="background-color: transparent; color: white; border: 2px solid white; border-radius: 999px; padding: 12px 28px; text-decoration: none; font-weight: 500; display: inline-block; margin-right: 10px; font-size: 14px;">
