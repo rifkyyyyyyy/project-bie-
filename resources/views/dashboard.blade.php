@@ -39,15 +39,7 @@ function filter_kamar($kamars, $prefix, $start, $end) {
                         <div style="margin-left: 30px;">
                             <h3 class="text-white pb-2 fw-bold" style="margin-top: 0;">Dashboard</h3>
                             <h2 class="text-white op-7 mb-2" style="margin-top: 0;">Welcome <b>{{ auth()->user()->name }}</b></h2>                            
-                        </div>
-                        <div class="py-2" style="margin-left: 770px;">
-                            <a href="#" style="background-color: transparent; color: white; border: 2px solid white; border-radius: 999px; padding: 12px 28px; text-decoration: none; font-weight: 500; display: inline-block; margin-right: 10px; font-size: 14px;">
-                                Manage
-                            </a>
-                            <a href="#" style="background-color: #7462e1; color: white; border: none; border-radius: 999px; padding: 12px 28px; text-decoration: none; font-weight: 500; display: inline-block; font-size: 14px;">
-                                Add Customer
-                            </a>
-                        </div>                                      
+                        </div>                         
                     </div>                    
                 </div>
             </div>
@@ -55,7 +47,7 @@ function filter_kamar($kamars, $prefix, $start, $end) {
             <div class="card shadow-sm border-0 mb-4" style="width: 83%; margin: auto; border-radius: 20; margin-top: -40px;">
                 <div class="card-body">
                     <h5 class="font-weight-bold">Statistik keseluruhan</h5>
-                    <p class="text-muted">Informasi harian tentang ketersediaan kamar</p>
+                    <p class="text-muted">Informasi harian tentang terisinya kamar</p>
                     <div class="d-flex justify-content-around mt-4">
                         <div class="text-center">
                             <div id="circles-1"></div>

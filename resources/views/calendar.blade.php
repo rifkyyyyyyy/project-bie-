@@ -48,7 +48,9 @@
             <option value="vvip">VVIP</option>
             <option value="barack">Barack</option>
         </select>
+        @if (auth()->user()->level === 'admin')
         <button class="btn btn-primary btn-sm">+ Reservation</button>
+        @endif
         </div>
   </div>
 

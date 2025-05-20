@@ -50,6 +50,9 @@
                                         </select>
                                     </div>
                                 </form>
+                                <a href="{{ route('table', request()->query()) }}" onclick="printTable(event)" class="btn btn-outline-secondary">
+                                    <i class="fa fa-print"></i> Print Tabel
+                                </a>
                         </div>                        
                     </div>
 
@@ -116,11 +119,18 @@
                                         </td>
                                         @if (auth()->user()->level === 'admin')
                                         <td>
-                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $r->id }}">Edit</button>
+                                            <!-- Tombol Edit (Icon Pencil) -->
+                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $r->id }}" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+
+                                            <!-- Tombol Hapus (Icon Trash) -->
                                             <form action="{{ route('reservasi.destroy', $r->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                                                <button class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')" title="Hapus">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
                                             </form>
                                         </td>
                                         @endif
@@ -198,5 +208,49 @@
             }
         });
     });
+
+    function printTable(event) {
+    event.preventDefault();
+
+    // Ambil isi tabel saja
+    let printContents = document.getElementById('customerTable').outerHTML;
+
+    // Tambahkan gaya dasar untuk cetak
+    let style = `
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 12px;
+            }
+            table, th, td {
+                border: 1px solid black;
+                padding: 5px;
+                text-align: left;
+            }
+            h2 {
+                text-align: center;
+            }
+        </style>
+    `;
+
+    // Buat window baru
+    let printWindow = window.open('', '', 'height=700,width=900');
+    printWindow.document.write('<html><head><title>Data Customer</title>');
+    printWindow.document.write(style);
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<h2>Data Customer</h2>');
+    printWindow.document.write(printContents);
+    printWindow.document.write('</body></html>');
+    printWindow.document.write('<p>Dicetak pada: {{ \Carbon\Carbon::now()->format("d-m-Y H:i") }}</p>');
+    printWindow.document.write('<p>Filter: {{ request("filter") ?? "Semua" }} | Status: {{ request("status") ?? "Semua" }}</p>');
+
+    // Tunggu load lalu cetak
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+}
+
 </script>
 @endpush
