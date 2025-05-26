@@ -22,9 +22,9 @@ class LoginController extends Controller
         ]);
 
                if (Auth::guard('web')->attempt($credentials)) {
-    \Log::info('Login berhasil');
-    $request->session()->regenerate();
-    return redirect()->intended('/dashboard');
+                \Log::info('Login berhasil');
+                $request->session()->regenerate();
+                return redirect()->intended('/dashboard');
 }
 
 \Log::error('Login gagal');

@@ -29,7 +29,7 @@ function filter_kamar($kamars, $prefix, $start, $end) {
 
 
 <!-- page content -->
-<div class="right_col" role="main" style="background-color: #f5f6fa; height: 250vh; width: 86vw; margin-left:-20px;">
+<div class="right_col" role="main" style="background-color: #f5f6fa; height: 170vh; width: 86vw; margin-left:-20px;">
     <div class="main-panel">
         <div class="content">
             <!-- Header dengan gradasi biru -->
@@ -75,8 +75,8 @@ function filter_kamar($kamars, $prefix, $start, $end) {
     {{-- ================= VVIP ================= --}}
     <h3 class="mt-4 text-center fw-bold">VVIP</h3>
     <div class="d-flex justify-content-between" style="max-width: 1000px; gap: 40px;">
-        <div style="flex: 1; text-align: center; font-weight: bold;">Putra</div>
         <div style="flex: 1; text-align: center; font-weight: bold;">Putri</div>
+        <div style="flex: 1; text-align: center; font-weight: bold;">Putra</div>
     </div>
     <div class="d-flex justify-content-between" style="gap: 40px; flex-wrap: wrap; max-width: 1000px;">
         <div style="flex: 1;">
@@ -113,8 +113,8 @@ function filter_kamar($kamars, $prefix, $start, $end) {
 {{-- ================= VIP ================= --}}
 <h3 class="mt-4 text-center fw-bold">VIP</h3>
     <div class="d-flex justify-content-between" style="max-width: 1000px; gap: 40px;">
-        <div style="flex: 1; text-align: center; font-weight: bold;">Putra</div>
         <div style="flex: 1; text-align: center; font-weight: bold;">Putri</div>
+        <div style="flex: 1; text-align: center; font-weight: bold;">Putra</div>
     </div>
 <div class="d-flex justify-content-between" style="gap: 40px; flex-wrap: wrap; max-width: 1000px;">
     <div style="flex: 1;">
@@ -150,8 +150,8 @@ function filter_kamar($kamars, $prefix, $start, $end) {
 {{-- ================= Barack ================= --}}
 <h3 class="mt-4 text-center fw-bold">BARACK</h3>
     <div class="d-flex justify-content-between" style="max-width: 1000px; gap: 40px;">
-        <div style="flex: 1; text-align: center; font-weight: bold;">Putra</div>
         <div style="flex: 1; text-align: center; font-weight: bold;">Putri</div>
+        <div style="flex: 1; text-align: center; font-weight: bold;">Putra</div>
     </div>
     <div class="d-flex justify-content-between" style="gap: 40px; flex-wrap: wrap; max-width: 1000px;">
     <div style="flex: 1;">

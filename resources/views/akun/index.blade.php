@@ -1,7 +1,7 @@
 @extends('layout.sidebar')
 
 @section('content')
-<div class="right_col" role="main" style="padding: 20px; background-color: #0d47a1; min-height: 100vh; color: white;">
+<div class="right_col" role="main" style="padding: 20px; background-color:  #0666c6; min-height: 100vh; color: white;">
 
     <h1 style="margin-bottom: 20px;">Daftar Akun</h1>
 
@@ -12,7 +12,7 @@
     @endif
 
     <a href="{{ route('akun.create') }}" 
-       style="background-color: #1976d2; padding: 10px 15px; border-radius: 5px; color: white; text-decoration: none; display: inline-block; margin-bottom: 20px;">
+       style="background-color: #0d6efd; padding: 10px 15px; border-radius: 5px; color: white; text-decoration: none; display: inline-block; margin-bottom: 20px;">
        Tambah Akun
     </a>
 

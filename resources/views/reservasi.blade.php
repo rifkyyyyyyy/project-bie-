@@ -112,7 +112,7 @@
                 <input type="date" class="form-control" name="periode_keluar" required>
               </div> --}}
   
-              <div class="mb-3">
+              {{-- <div class="mb-3">
                 <label for="lamaMenginap" class="form-label"><strong>Lama Menginap</strong></label>
                 <select class="form-select" id="lamaMenginap" name="lama_menginap" required>
                   <option value="1">1 Hari</option>
@@ -122,6 +122,14 @@
                   <option value="60">2 Bulan</option>
                   <option value="90">3 Bulan</option>
                 </select>
+              </div> --}}
+              <div class="mb-3">
+                <label for="lamaMenginap" class="form-label"><strong>Lama Menginap (hari)</strong></label>
+                <div class="input-group">
+                  <button type="button" class="btn btn-outline-secondary" onclick="ubahHari(-1)">−</button>
+                  <input type="number" class="form-control" id="lamaMenginap" name="lama_menginap" value="1" min="1" required>
+                  <button type="button" class="btn btn-outline-secondary" onclick="ubahHari(1)">+</button>
+                </div>
               </div>
 
               <div class="mb-3">
@@ -186,6 +194,13 @@
         tipeKamar.addEventListener('change', fetchKamar);
         gender.addEventListener('change', fetchKamar);
     });
+    function ubahHari(jumlah) {
+    const input = document.getElementById('lamaMenginap');
+    let nilai = parseInt(input.value) || 1;
+    nilai += jumlah;
+    if (nilai < 1) nilai = 1;
+    input.value = nilai;
+  }
 </script>
 
 @endsection

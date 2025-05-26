@@ -57,7 +57,7 @@ class AkunController extends Controller
         ]);
 
         $akun->update([
-            'nama' => $request->nama,
+            'name' => $request->nama,
             'email' => $request->email,
             'level' => $request->level,
         ]);

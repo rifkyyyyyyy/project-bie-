@@ -10,7 +10,9 @@
   <link href="{{ asset('vendors/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
   <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+ <link rel="icon" type="image/png" href="{{ asset('gambar/logo.png') }}">
+
   @stack('styles')
   <style>
     * {
@@ -180,11 +182,20 @@
 
   
       <!-- MARQUEE -->
+      @if(auth()->user()->level === 'admin')
       <div class="marquee flex-grow-1 d-flex align-items-center px-3">
         <div class="marquee-content text-white">
           Selamat Datang Admin di Sistem Informasi Manajemen Akupansi Brilliant International Education - Kampung Inggris Pare
         </div>
       </div>
+      @endif
+      @if(auth()->user()->level === 'marketing')
+      <div class="marquee flex-grow-1 d-flex align-items-center px-3">
+        <div class="marquee-content text-white">
+          Selamat Datang Marketing di Sistem Informasi Manajemen Akupansi Brilliant International Education - Kampung Inggris Pare
+        </div>
+      </div>
+      @endif
   
       <!-- LOGOUT -->
       <form method="POST" action="{{ route('logout') }}">
@@ -230,17 +241,12 @@
     <li class="nav-item">
         <a href="{{ url('/reservasi') }}" class="nav-link"><i class="fa fa-edit me-2"></i> Reservasi</a>
     </li>
-    @endif
-
     <li class="nav-item">
         <a href="{{ url('/table') }}" class="nav-link"><i class="fa fa-table me-2"></i> Data</a>
     </li>
-
     <li class="nav-item">
         <a href="{{ url('/calendar') }}" class="nav-link"><i class="fa fa-calendar me-2"></i> Calendar</a>
     </li>
-
-    @if(auth()->user()->level === 'admin')
     <li class="nav-item">
         <a href="{{ url('/akun') }}" class="nav-link"><i class="fa fa-user me-2"></i> Akun</a>
     </li>

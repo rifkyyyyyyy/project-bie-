@@ -1,237 +1,227 @@
 @extends('layout.sidebar')
 
 @section('content')
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .calendar-grid {
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  html {
+      font-size: 16px;
+  }
+
+  body, .calendar-grid > div, .booking, select, .modal-body, .modal-title, .btn, .form-select {
+      font-size: 1rem !important;
+  }
+
+  .calendar-wrapper {
+      overflow-x: auto;
+      white-space: nowrap;
+  }
+  .calendar-grid {
       display: grid;
-      grid-template-columns: 150px repeat(14, 1fr);
-      border-left: 1px solid #dee2e6;
-    }
-    .calendar-grid > div:not(:last-child) {
+      grid-auto-flow: column;
+      grid-auto-columns: 100px;
+      overflow-x: auto;
+      white-space: nowrap;
+  }
+
+  .calendar-grid > div:not(:last-child) {
       border-right: 1px solid #dee2e6;
-    }
-    .booking {
-        position: absolute;
-        top: 4px;
-        left: 0;
-        padding: 2px 6px;
-        font-size: 0.75rem;
-        color: white;
-        background-color: #28a745;
-        border-radius: 4px;
-        width: 100%;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-    }
-  </style>
+  }
+  .calendar-grid > div {
+      padding: 2px 2px;
+      line-height: 1.1;
+      text-align: center;
+      height: 36px;
+  }
+  .booking {
+      position: absolute;
+      top: 2px;
+      left: 0;
+      padding: 1px 4px;
+      color: white;
+      background-color: #28a745;
+      border-radius: 2px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      height: 22px;
+  }
+</style>
 
 
-  <!-- Top Controls -->
-  <div class="bg-white shadow-sm border-bottom p-3 d-flex justify-content-between align-items-center">
+
+
+@php
+    $selectedMonth = request('month') ?? now()->month;
+    $selectedYear = request('year') ?? now()->year;
+    $startDate = $reservasis->min('periode_masuk') ? \Carbon\Carbon::parse($reservasis->min('periode_masuk'))->startOfDay() : \Carbon\Carbon::create($selectedYear, $selectedMonth, 1);
+$daysInMonth = $startDate->daysInMonth;
+@endphp
+
+<div class="bg-white shadow-sm border-bottom p-3 d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center gap-3">
+        <form method="GET" id="monthForm" class="d-flex gap-2">
+            <select name="month" class="form-select form-select-sm" onchange="document.getElementById('monthForm').submit();">
+                @foreach(range(1, 12) as $m)
+                    <option value="{{ $m }}" {{ $m == $selectedMonth ? 'selected' : '' }}>
+                        {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                    </option>
+                @endforeach
+            </select>
+            <select name="year" class="form-select form-select-sm" onchange="document.getElementById('monthForm').submit();">
+                @for($y = now()->year - 2; $y <= now()->year + 2; $y++)
+                    <option value="{{ $y }}" {{ $y == $selectedYear ? 'selected' : '' }}>{{ $y }}</option>
+                @endfor
+            </select>
+        </form>
+            <select id="roomFilter" class="form-select gap-3 form-select-sm d-inline-block" style="width: auto; padding-top: 4px; padding-bottom: 4px; margin-left: -20px;">
+              <option value="all">All</option>
+              <option value="vvip">VVIP</option>
+              <option value="vip">VIP</option>
+              <option value="barack">Barack</option>
+            </select>
+    </div>
+    
     <div class="d-flex align-items-center gap-2">
-        <button class="btn btn-outline-secondary btn-sm">14 days</button>
-        <button class="btn btn-outline-secondary btn-sm">View today</button>
-        <div class="d-flex align-items-center gap-2" style="margin-left:280px;">
-            <span id="prev-month" class="px-2 text-muted fs-5" style="cursor:pointer">&#8592;&#8592;</span>
-            <span id="current-month" class="fw-medium small">31 Aug 2021</span>
-            <span id="next-month" class="px-2 text-muted fs-5" style="cursor:pointer">&#8594;&#8594;</span>
-          </div>
-          
-      </div>
-      
-        <div class="d-flex align-items-center gap-2">
-        <select id="roomFilter" class="form-select form-select-sm w-auto">
-            <option value="all">All</option>
-            <option value="vip">VIP</option>
-            <option value="vvip">VVIP</option>
-            <option value="barack">Barack</option>
-        </select>
         @if (auth()->user()->level === 'admin')
-        <button class="btn btn-primary btn-sm">+ Reservation</button>
+        <a href="{{ route('reservasi.create') }}" class="btn btn-primary btn-sm">+ Reservation</a>
         @endif
-        </div>
-  </div>
+    </div>
+</div>
 
-                <!-- Calendar -->
-              <div class="overflow-auto">
-                @php
-                $dayWidth = 80; // px
-                $today = now();
-                @endphp
-                
-                <div class="calendar-grid text-center text-uppercase small fw-semibold border-bottom bg-white">
-                    <div class="bg-light px-2 py-2 border-end">Room</div>
-                    @for ($i = 0; $i < 14; $i++)
-                        <div class="py-2">{{ now()->addDays($i)->format('D') }}<br>{{ now()->addDays($i)->format('d M') }}</div>
+<!-- Kalender -->
+<div class="calendar-wrapper">
+    <!-- WRAPPER SATU-SATUNYA YANG DISCROLL -->
+    <div class="overflow-auto">
+        <div style="min-width: max-content;"> <!-- supaya tidak memaksa lebar -->
+            
+            @php
+                // Tanggal awal kalender (1 di bulan yang dipilih)
+                $startDate = \Carbon\Carbon::create($selectedYear, $selectedMonth, 1);
+            @endphp
+
+            <!-- Header tanggal -->
+            <div class="calendar-grid text-center text-uppercase fw-semibold border-bottom bg-white">
+                <div class="bg-light px-1 py-1 border-end">Room</div>
+                @for ($i = 1; $i <= $daysInMonth; $i++)
+                    @php $date = \Carbon\Carbon::create($selectedYear, $selectedMonth, $i); @endphp
+                    <div class="px-1 py-1">
+                        {{ $date->format('D') }}<br>{{ $date->format('d M') }}
+                    </div>
+                @endfor
+            </div>
+
+            <!-- Isi kamar -->
+            @foreach ($kamars as $tipe => $listKamar)
+                <div class="calendar-grid bg-light align-items-center text-sm fw-semibold border-bottom">
+                    <div class="h-100 px-2 border-end d-flex align-items-center">{{ strtoupper($tipe) }}</div>
+                    @for ($i = 1; $i <= $daysInMonth; $i++)
+                        <div></div>
                     @endfor
                 </div>
-                
-                @foreach ($kamars as $tipe => $listKamar)
-                    <div class="calendar-grid bg-light align-items-center text-sm fw-semibold border-bottom">
-                        <div class="h-100 px-2 border-end d-flex align-items-center">{{ strtoupper($tipe) }}</div>
-                        <div class="col-span-14"></div>
-                    </div>
-                
-                    @foreach ($listKamar as $kamar)
 
-                        @php
-                            // Cek apakah kamar punya reservasi aktif (masih menginap)
-                            $isActive = $reservasis->where('kamar_id', $kamar->id)->contains(function ($r) use ($today) {
-                                return \Carbon\Carbon::parse($r->periode_keluar)->gte($today);
-                            });
-                        @endphp
+                @foreach ($listKamar as $kamar)
+                    @php
+                        $isActive = $reservasis->where('kamar_id', $kamar->id)->contains(function ($r) use ($selectedYear, $selectedMonth) {
+                            return \Carbon\Carbon::parse($r->periode_keluar)->year == $selectedYear &&
+                                   \Carbon\Carbon::parse($r->periode_keluar)->month == $selectedMonth;
+                        });
+                    @endphp
 
-                        @if ($isActive)
-                        <div class="calendar-grid align-items-start border-bottom bg-white position-relative" style="height: 48px; overflow: visible;">
-                            <div class="h-100 px-2 border-end d-flex align-items-center">{{ $kamar->nomor_kamar }}</div>
+                    @if ($isActive)
+                    <div class="calendar-grid align-items-start border-bottom bg-white position-relative {{ strtolower($tipe) }}" style="height: 48px;">
+                      <div class="h-100 px-2 border-end d-flex align-items-center">{{ $kamar->nomor_kamar }}</div>
+                            <div class="position-relative d-flex" style="grid-column: span {{ $daysInMonth }}; height: 48px;">
+                                <div class="position-relative" style="margin-left: 0; min-width: {{ $daysInMonth * 80 }}px; height: 100%;">
+                                    @php $offsetTop = 0; @endphp
+                                    @foreach ($reservasis->where('kamar_id', $kamar->id) as $r)
+                                        @php
+                                            $start = \Carbon\Carbon::parse($r->periode_masuk);
+                                            $end = \Carbon\Carbon::parse($r->periode_keluar);
 
-                            <div class="position-relative" style="grid-column: span 14; height: 48px; width: 100%;">
+                                            if ($end->lt($startDate)) continue;
 
-                                @php
-                                    $offsetTop = 0;
+                                            $startOffset = max(0, $start->diffInDays($startDate, false));
+                                            $duration = max(1, $start->diffInDays($end) + 1);
 
-                                    $activeReservasis = $reservasis->where('kamar_id', $kamar->id)->filter(function ($r) use ($today) {
-                                        return \Carbon\Carbon::parse($r->periode_masuk)->lte($today) &&
-                                              \Carbon\Carbon::parse($r->periode_keluar)->gte($today);
-                                    });
+                                            $bgColor = '#1fe668';
+                                            $jumlahAktif = $reservasis->where('kamar_id', $kamar->id)
+                                                ->filter(function ($rr) use ($selectedYear, $selectedMonth) {
+                                                    return \Carbon\Carbon::parse($rr->periode_keluar)->year == $selectedYear &&
+                                                        \Carbon\Carbon::parse($rr->periode_keluar)->month == $selectedMonth;
+                                                })->count();
 
-                                    $jumlahAktif = $activeReservasis->count();
+                                            if ($jumlahAktif > 0 && $jumlahAktif < $kamar->kapasitas) {
+                                                $bgColor = '#ffcc00';
+                                            }
+                                        @endphp
 
-                                    $bgColor = '';
-                                    if ($jumlahAktif > 0 && $jumlahAktif < $kamar->kapasitas) {
-                                        $bgColor = '#ffcc00'; // kuning
-                                    } elseif ($jumlahAktif >= $kamar->kapasitas) {
-                                        $bgColor = '#1fe668'; // hijau
-                                    }
-                                @endphp
+                                        <div class="booking"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalReservasi{{ $r->id }}"
+                                            style="position: absolute; left: {{ $startOffset * 80 }}px; width: {{ $duration * 80 }}px; top: {{ $offsetTop }}px; background-color: {{ $bgColor }};">
+                                            {{ $r->nama_lengkap }}
+                                        </div>
 
-                                @foreach ($reservasis->where('kamar_id', $kamar->id) as $r)
-                                    @php
-                                        $periodeKeluar = \Carbon\Carbon::parse($r->periode_keluar);
-                                        if ($periodeKeluar->lt($today)) continue;
+                                        @php $offsetTop += 24; @endphp
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
 
-                                        $startIndex = \Carbon\Carbon::parse($r->periode_masuk)->diffInDays($startDate);
-                                        $duration = \Carbon\Carbon::parse($r->periode_masuk)->diffInDays($r->periode_keluar) + 1;
-                                        $left = $startIndex * $dayWidth;
-                                        $width = $duration * $dayWidth;
-                                    @endphp
-
-                                    <div class="booking"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalReservasi{{ $r->id }}"
-                                        style="left: {{ $left }}px; width: {{ $width }}px; top: {{ $offsetTop }}px; background-color: {{ $bgColor }};">
-                                        {{ $r->nama_lengkap }}
-                                    </div>
-
-                                    {{-- Modal --}}
-                                    <div class="modal fade" id="modalReservasi{{ $r->id }}" tabindex="-1" aria-labelledby="modalReservasiLabel{{ $r->id }}" aria-hidden="true">
-                                        <div class="modal-dialog modal-sm">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="modalReservasiLabel{{ $r->id }}">Detail Reservasi</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p><strong>Nama:</strong> {{ $r->nama_lengkap }}</p>
-                                                    <p><strong>Periode:</strong><br>
-                                                        {{ \Carbon\Carbon::parse($r->periode_masuk)->translatedFormat('d F Y') }} - 
-                                                        {{ \Carbon\Carbon::parse($r->periode_keluar)->translatedFormat('d F Y') }}
-                                                    </p>
-                                                    <p><strong>Lama Menginap:</strong> 
-                                                        @switch($r->lama_menginap)
-                                                            @case(1) 1 Hari @break
-                                                            @case(7) 1 Minggu @break
-                                                            @case(14) 2 Minggu @break
-                                                            @case(30) 1 Bulan @break
-                                                            @case(60) 2 Bulan @break
-                                                            @case(90) 3 Bulan @break
-                                                            @default {{ $r->lama_menginap }} Hari
-                                                        @endswitch
-                                                    </p>
-                                                </div>
+                        <!-- Modal -->
+                                <div class="modal fade" id="modalReservasi{{ $r->id }}" tabindex="-1" aria-labelledby="modalLabel{{ $r->id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalLabel{{ $r->id }}">Detail Reservasi</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p><strong>Nama:</strong> {{ $r->nama_lengkap }}</p>
+                                                <p><strong>Periode:</strong><br>
+                                                    {{ \Carbon\Carbon::parse($r->periode_masuk)->translatedFormat('d F Y') }} -
+                                                    {{ \Carbon\Carbon::parse($r->periode_keluar)->translatedFormat('d F Y') }}
+                                                </p>
+                                                <p><strong>Lama Menginap:</strong> {{ $r->lama_menginap }} Hari</p>
                                             </div>
                                         </div>
                                     </div>
-
-                                    @php
-                                        $offsetTop += 24;
-                                    @endphp
-                                @endforeach
-
-                            </div>
-                        </div>
-                        @endif
-
-                    @endforeach
-                  @endforeach
-
-  
-
-
-
-
-  <!-- Legend -->
-  <div class="d-flex gap-4 small mt-4 px-4 text-white">
-  <div class="d-flex align-items-center">
-    <div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #ff8832;"></div>
-    Confirmed
-  </div>
-  <div class="d-flex align-items-center">
-    <div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #1fe668;"></div>
-    Checked in
-  </div>
-  <div class="d-flex align-items-center">
-    <div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #8490a7;"></div>
-    Checked out
-  </div>
-  <div class="d-flex align-items-center">
-    <div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #ff5f5f;"></div>
-    Room closure
-  </div>
+                                </div>
+                    @endif
+                @endforeach
+            @endforeach
+        </div>
+    </div>
 </div>
 
 
-  <!-- Script Filter -->
-  <script>
-    document.getElementById('roomFilter').addEventListener('change', function () {
+<!-- Legend -->
+<div class="d-flex gap-4 small mt-4 px-4 text-white">
+  <div class="d-flex align-items-center">
+    <div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #facc15;"></div>
+    Terisi Sebagian
+  </div>
+  <div class="d-flex align-items-center">
+    <div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #22c55e;"></div>
+    Penuh
+  </div>
+</div>
+
+<script>
+  document.getElementById('roomFilter').addEventListener('change', function () {
       const value = this.value;
       const rows = document.querySelectorAll('.calendar-grid.position-relative');
-      rows.forEach(row => {
-        if (value === 'all') {
-          row.style.display = '';
-        } else if (row.classList.contains(value)) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
-    });
-  </script>
-  <script>
-    let currentDate = new Date();
-  
-    function updateDisplayedMonth() {
-      const options = { year: 'numeric', month: 'long' }; // Format bulan panjang
-      document.getElementById("current-month").textContent =
-        currentDate.toLocaleDateString('en-US', options);
-    }
-  
-    document.getElementById("prev-month").addEventListener("click", () => {
-      currentDate.setMonth(currentDate.getMonth() - 1);
-      updateDisplayedMonth();
-    });
-  
-    document.getElementById("next-month").addEventListener("click", () => {
-      currentDate.setMonth(currentDate.getMonth() + 1);
-      updateDisplayedMonth();
-    });
-  
-    // Initial load
-    updateDisplayedMonth();
-  </script>
-  
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  @endsection
+      rows.forEach(row => {
+          if (value === 'all') {
+              row.style.display = '';
+          } else {
+              row.style.display = row.classList.contains(value) ? '' : 'none';
+          }
+      });
+  });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+@endsection
