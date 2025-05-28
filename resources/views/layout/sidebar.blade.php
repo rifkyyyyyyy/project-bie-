@@ -236,16 +236,15 @@
     <li class="nav-item">
         <a href="{{ url('/dashboard') }}" class="nav-link"><i class="fa fa-home me-2"></i> Dashboard</a>
     </li>
-
+    <li class="nav-item">
+      <a href="{{ url('/calendar') }}" class="nav-link"><i class="fa fa-calendar me-2"></i> Calendar</a>
+    </li>
     @if(auth()->user()->level === 'admin')
     <li class="nav-item">
         <a href="{{ url('/reservasi') }}" class="nav-link"><i class="fa fa-edit me-2"></i> Reservasi</a>
     </li>
     <li class="nav-item">
         <a href="{{ url('/table') }}" class="nav-link"><i class="fa fa-table me-2"></i> Data</a>
-    </li>
-    <li class="nav-item">
-        <a href="{{ url('/calendar') }}" class="nav-link"><i class="fa fa-calendar me-2"></i> Calendar</a>
     </li>
     <li class="nav-item">
         <a href="{{ url('/akun') }}" class="nav-link"><i class="fa fa-user me-2"></i> Akun</a>

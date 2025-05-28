@@ -53,8 +53,8 @@
 @php
     $selectedMonth = request('month') ?? now()->month;
     $selectedYear = request('year') ?? now()->year;
-    $startDate = $reservasis->min('periode_masuk') ? \Carbon\Carbon::parse($reservasis->min('periode_masuk'))->startOfDay() : \Carbon\Carbon::create($selectedYear, $selectedMonth, 1);
-$daysInMonth = $startDate->daysInMonth;
+    $startDate = \Carbon\Carbon::create($selectedYear, $selectedMonth, 1);
+    $daysInMonth = $startDate->daysInMonth;
 @endphp
 
 <div class="bg-white shadow-sm border-bottom p-3 d-flex justify-content-between align-items-center">
@@ -120,12 +120,17 @@ $daysInMonth = $startDate->daysInMonth;
                 </div>
 
                 @foreach ($listKamar as $kamar)
-                    @php
-                        $isActive = $reservasis->where('kamar_id', $kamar->id)->contains(function ($r) use ($selectedYear, $selectedMonth) {
-                            return \Carbon\Carbon::parse($r->periode_keluar)->year == $selectedYear &&
-                                   \Carbon\Carbon::parse($r->periode_keluar)->month == $selectedMonth;
-                        });
-                    @endphp
+                @php
+                $isActive = $reservasis->where('kamar_id', $kamar->id)->contains(function ($r) use ($selectedYear, $selectedMonth) {
+                    $periodeMasuk = \Carbon\Carbon::parse($r->periode_masuk);
+                    $periodeKeluar = \Carbon\Carbon::parse($r->periode_keluar);
+                    $startOfMonth = \Carbon\Carbon::create($selectedYear, $selectedMonth, 1);
+                    $endOfMonth = $startOfMonth->copy()->endOfMonth();
+                
+                    return $periodeMasuk->lte($endOfMonth) && $periodeKeluar->gte($startOfMonth);
+                });
+                @endphp
+                
 
                     @if ($isActive)
                     <div class="calendar-grid align-items-start border-bottom bg-white position-relative {{ strtolower($tipe) }}" style="height: 48px;">
@@ -134,24 +139,47 @@ $daysInMonth = $startDate->daysInMonth;
                                 <div class="position-relative" style="margin-left: 0; min-width: {{ $daysInMonth * 80 }}px; height: 100%;">
                                     @php $offsetTop = 0; @endphp
                                     @foreach ($reservasis->where('kamar_id', $kamar->id) as $r)
-                                        @php
+                                            @php
                                             $start = \Carbon\Carbon::parse($r->periode_masuk);
                                             $end = \Carbon\Carbon::parse($r->periode_keluar);
-
+                                        
                                             if ($end->lt($startDate)) continue;
-
+                                        
                                             $startOffset = max(0, $start->diffInDays($startDate, false));
                                             $duration = max(1, $start->diffInDays($end) + 1);
+                                            
 
-                                            $bgColor = '#1fe668';
+                                        
+                                            // Hitung jumlah penghuni aktif pada kamar di tanggal tersebut
                                             $jumlahAktif = $reservasis->where('kamar_id', $kamar->id)
-                                                ->filter(function ($rr) use ($selectedYear, $selectedMonth) {
-                                                    return \Carbon\Carbon::parse($rr->periode_keluar)->year == $selectedYear &&
-                                                        \Carbon\Carbon::parse($rr->periode_keluar)->month == $selectedMonth;
-                                                })->count();
+                                            ->filter(function ($rr) use ($selectedYear, $selectedMonth) {
+                                                $masuk = \Carbon\Carbon::parse($rr->periode_masuk);
+                                                $keluar = \Carbon\Carbon::parse($rr->periode_keluar);
+                                                $startOfMonth = \Carbon\Carbon::create($selectedYear, $selectedMonth, 1);
+                                                $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
-                                            if ($jumlahAktif > 0 && $jumlahAktif < $kamar->kapasitas) {
-                                                $bgColor = '#ffcc00';
+                                                return $masuk->lte($endOfMonth) && $keluar->gte($startOfMonth);
+                                            })->count();
+
+                                        
+                                            // Atur warna sesuai logika
+                                            $bgColor = '#22c55e'; // default hijau (kosong)
+                                        
+                                            if (strtolower($kamar->tipe_kamar) === 'vvip' || strtolower($kamar->tipe_kamar) === 'vip') {
+                                                if ($jumlahAktif === 2) {
+                                                    $bgColor = '#dc2626'; // merah (penuh)
+                                                } elseif ($jumlahAktif === 1) {
+                                                    $bgColor = '#facc15'; // kuning (sebagian)
+                                                }
+                                            } elseif (strtolower($kamar->tipe_kamar) === 'barack') {
+                                                switch ($jumlahAktif) {
+                                                    case 1: $bgColor = '#a16207'; break; // coklat
+                                                    case 2: $bgColor = '#9333ea'; break; // ungu
+                                                    case 3: $bgColor = '#f97316'; break; // oren
+                                                    case 4: $bgColor = '#3b82f6'; break; // biru
+                                                    case 5: $bgColor = '#facc15'; break; // kuning
+                                                    case 6: $bgColor = '#dc2626'; break; // merah
+                                                }
                                             }
                                         @endphp
 
@@ -161,32 +189,30 @@ $daysInMonth = $startDate->daysInMonth;
                                             style="position: absolute; left: {{ $startOffset * 80 }}px; width: {{ $duration * 80 }}px; top: {{ $offsetTop }}px; background-color: {{ $bgColor }};">
                                             {{ $r->nama_lengkap }}
                                         </div>
-
+                                          <!-- Modal -->
+                                          <div class="modal fade" id="modalReservasi{{ $r->id }}" tabindex="-1" aria-labelledby="modalLabel{{ $r->id }}" aria-hidden="true">
+                                            <div class="modal-dialog modal-sm">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="modalLabel{{ $r->id }}">Detail Reservasi</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p><strong>Nama:</strong> {{ $r->nama_lengkap }}</p>
+                                                        <p><strong>Periode:</strong><br>
+                                                            {{ \Carbon\Carbon::parse($r->periode_masuk)->translatedFormat('d F Y') }} -
+                                                            {{ \Carbon\Carbon::parse($r->periode_keluar)->translatedFormat('d F Y') }}
+                                                        </p>
+                                                        <p><strong>Lama Menginap:</strong> {{ $r->lama_menginap }} Hari</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                          </div>
                                         @php $offsetTop += 24; @endphp
                                     @endforeach
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Modal -->
-                                <div class="modal fade" id="modalReservasi{{ $r->id }}" tabindex="-1" aria-labelledby="modalLabel{{ $r->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-sm">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalLabel{{ $r->id }}">Detail Reservasi</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p><strong>Nama:</strong> {{ $r->nama_lengkap }}</p>
-                                                <p><strong>Periode:</strong><br>
-                                                    {{ \Carbon\Carbon::parse($r->periode_masuk)->translatedFormat('d F Y') }} -
-                                                    {{ \Carbon\Carbon::parse($r->periode_keluar)->translatedFormat('d F Y') }}
-                                                </p>
-                                                <p><strong>Lama Menginap:</strong> {{ $r->lama_menginap }} Hari</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                     @endif
                 @endforeach
             @endforeach
@@ -195,16 +221,14 @@ $daysInMonth = $startDate->daysInMonth;
 </div>
 
 
-<!-- Legend -->
-<div class="d-flex gap-4 small mt-4 px-4 text-white">
-  <div class="d-flex align-items-center">
-    <div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #facc15;"></div>
-    Terisi Sebagian
-  </div>
-  <div class="d-flex align-items-center">
-    <div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #22c55e;"></div>
-    Penuh
-  </div>
+<div class="d-flex gap-4 small mt-4 px-4 text-white flex-wrap">
+  <div class="d-flex align-items-center"><div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #22c55e;"></div> Kosong</div>
+  <div class="d-flex align-items-center"><div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #facc15;"></div> Kuning (1/2 atau 5/6)</div>
+  <div class="d-flex align-items-center"><div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #a16207;"></div> Coklat (1/6)</div>
+  <div class="d-flex align-items-center"><div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #9333ea;"></div> Ungu (2/6)</div>
+  <div class="d-flex align-items-center"><div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #f97316;"></div> Oren (3/6)</div>
+  <div class="d-flex align-items-center"><div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #3b82f6;"></div> Biru (4/6)</div>
+  <div class="d-flex align-items-center"><div class="me-2 rounded-1" style="width: 16px; height: 16px; background-color: #dc2626;"></div> Merah (Penuh)</div>
 </div>
 
 <script>
